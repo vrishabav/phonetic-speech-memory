@@ -1,0 +1,370 @@
+{
+  "generated_at": "2026-09-08T19:05:14.226390+00:00",
+  "settings": {
+    "clock": "clock.system",
+    "phonetics": "phonetics.null",
+    "store": "store.memory",
+    "index": "index.inmemory",
+    "llm": "llm.stub",
+    "formatter": "formatter.passthrough",
+    "policies": [
+      "suppression",
+      "verbatim",
+      "already_canonical",
+      "script_fit",
+      "scope_fit",
+      "exact_variant",
+      "phonetic",
+      "common_word_guard",
+      "cooccurrence",
+      "conflict",
+      "recency"
+    ],
+    "allow_llm_adjudication": true,
+    "allow_prompt_injection": true,
+    "verify_output": true,
+    "thresholds": {
+      "retrieval_max_distance": 0.34,
+      "apply_score": 0.55,
+      "propose_score": 0.3,
+      "activation_confidence": 0.6,
+      "activation_strength": 1.5,
+      "dormancy_confidence": 0.35,
+      "decay_half_life_days": 90.0,
+      "learn_max_phonetic_distance": 0.45,
+      "reverts_to_suppress": 2
+    },
+    "weights": {
+      "declared": 3.0,
+      "instruction": 3.0,
+      "post_edit": 1.0,
+      "repetition": 0.5,
+      "ambient": 0.25,
+      "imported": 1.0,
+      "revert": 2.0,
+      "dismissal": 1.0
+    }
+  },
+  "totals": {
+    "cases": 69,
+    "passed": 57,
+    "failed": 12,
+    "pass_rate": 0.8261
+  },
+  "interventions": {
+    "useful_intervention": 35,
+    "harmful_intervention": 1,
+    "correct_abstention": 22,
+    "missed_intervention": 2,
+    "reason_mismatch": 9
+  },
+  "positive_cases": {
+    "n": 37,
+    "useful": 35,
+    "missed": 1,
+    "harmful": 1
+  },
+  "negative_cases": {
+    "n": 32,
+    "correct_abstention": 22,
+    "false_intervention": 0,
+    "false_intervention_rate": 0.0
+  },
+  "cost": {
+    "llm_calls_total": 0,
+    "llm_calls_per_case": 0.0,
+    "zero_call_cases": 69
+  },
+  "latency_ms": {
+    "p50": 0.167,
+    "p95": 0.294,
+    "max": 0.498
+  },
+  "by_class": {
+    "acronym_collapse": {
+      "useful_intervention": 3
+    },
+    "already_canonical": {
+      "correct_abstention": 2
+    },
+    "ambiguous_conflict": {
+      "correct_abstention": 1
+    },
+    "casing": {
+      "useful_intervention": 2
+    },
+    "common_word_sense": {
+      "correct_abstention": 5,
+      "useful_intervention": 1
+    },
+    "conflict_resolved": {
+      "useful_intervention": 1,
+      "correct_abstention": 1
+    },
+    "dormant_unsupported": {
+      "reason_mismatch": 1
+    },
+    "homophone_spelling": {
+      "useful_intervention": 5
+    },
+    "indic_script": {
+      "useful_intervention": 3
+    },
+    "multi_token_span": {
+      "useful_intervention": 5
+    },
+    "near_threshold": {
+      "correct_abstention": 1
+    },
+    "no_candidate": {
+      "correct_abstention": 3
+    },
+    "not_phonetic": {
+      "reason_mismatch": 1
+    },
+    "phonetic_stranger": {
+      "correct_abstention": 2
+    },
+    "preferred_exonym": {
+      "useful_intervention": 1
+    },
+    "real_word_hijack": {
+      "useful_intervention": 5
+    },
+    "revival": {
+      "useful_intervention": 1
+    },
+    "scope_carryover": {
+      "useful_intervention": 1
+    },
+    "scope_mismatch": {
+      "correct_abstention": 1
+    },
+    "script_preference": {
+      "useful_intervention": 1
+    },
+    "script_shift": {
+      "reason_mismatch": 2
+    },
+    "segmentation": {
+      "useful_intervention": 3
+    },
+    "sigil_handle": {
+      "useful_intervention": 1
+    },
+    "sound_alike_common_phrase": {
+      "reason_mismatch": 1
+    },
+    "sound_alike_common_word": {
+      "reason_mismatch": 2
+    },
+    "standing_instruction": {
+      "useful_intervention": 2,
+      "harmful_intervention": 1
+    },
+    "suppressed_by_revert": {
+      "correct_abstention": 1
+    },
+    "unknown_term": {
+      "correct_abstention": 1,
+      "reason_mismatch": 1
+    },
+    "unseen_mishearing": {
+      "missed_intervention": 2
+    },
+    "verbatim_region": {
+      "correct_abstention": 2
+    },
+    "weak_evidence": {
+      "correct_abstention": 1
+    },
+    "wrong_referent": {
+      "reason_mismatch": 1,
+      "correct_abstention": 1
+    }
+  },
+  "by_expected_reason": {
+    "already_canonical": {
+      "pass": 3
+    },
+    "ambiguous_conflict": {
+      "pass": 2
+    },
+    "below_activation_threshold": {
+      "pass": 1
+    },
+    "below_threshold": {
+      "fail": 2
+    },
+    "common_word_guard": {
+      "pass": 1,
+      "fail": 3
+    },
+    "context_supported": {
+      "pass": 9
+    },
+    "dormant_without_support": {
+      "fail": 1
+    },
+    "exact_observed_variant": {
+      "pass": 25
+    },
+    "guard_condition_met": {
+      "pass": 4
+    },
+    "no_candidate": {
+      "pass": 7
+    },
+    "out_of_scope": {
+      "pass": 1
+    },
+    "phonetic_high_confidence": {
+      "fail": 1
+    },
+    "script_mismatch": {
+      "fail": 2
+    },
+    "single_observation": {
+      "fail": 2
+    },
+    "standing_instruction": {
+      "pass": 1,
+      "fail": 1
+    },
+    "suppressed": {
+      "pass": 1
+    },
+    "verbatim_region": {
+      "pass": 2
+    }
+  },
+  "failures": [
+    {
+      "case_id": "A8-002",
+      "class": "standing_instruction",
+      "outcome": "harmful_intervention",
+      "expected": "Zero-data retention (ZDR) is on for this account.",
+      "actual": "ZDR is on for this account.",
+      "expected_reason": "standing_instruction",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A13-001",
+      "class": "unseen_mishearing",
+      "outcome": "missed_intervention",
+      "expected": "Ask Aadith Narayanan to review the change.",
+      "actual": "Ask Aadhith Narayanan to review the change.",
+      "expected_reason": "phonetic_high_confidence",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "A13-002",
+      "class": "unseen_mishearing",
+      "outcome": "missed_intervention",
+      "expected": "Ask Eeshan to review the change.",
+      "actual": "Ask Eeshan to review the change.",
+      "expected_reason": "single_observation",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B7-002",
+      "class": "unknown_term",
+      "outcome": "reason_mismatch",
+      "expected": "Ask Shreyas to look at the queue depth.",
+      "actual": "Ask Shreyas to look at the queue depth.",
+      "expected_reason": "single_observation",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B10-001",
+      "class": "dormant_unsupported",
+      "outcome": "reason_mismatch",
+      "expected": "Rukminy Iyer sent the invite.",
+      "actual": "Rukminy Iyer sent the invite.",
+      "expected_reason": "dormant_without_support",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B12-001",
+      "class": "not_phonetic",
+      "outcome": "reason_mismatch",
+      "expected": "The round was two crore at a ten x multiple.",
+      "actual": "The round was two crore at a ten x multiple.",
+      "expected_reason": "below_threshold",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B14-001",
+      "class": "wrong_referent",
+      "outcome": "reason_mismatch",
+      "expected": "He did his PhD at I I T Delhi.",
+      "actual": "He did his PhD at I I T Delhi.",
+      "expected_reason": "below_threshold",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B16-001",
+      "class": "sound_alike_common_word",
+      "outcome": "reason_mismatch",
+      "expected": "The numbers were set before the run.",
+      "actual": "The numbers were set before the run.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B16-002",
+      "class": "sound_alike_common_word",
+      "outcome": "reason_mismatch",
+      "expected": "The logs were dropped during the deploy.",
+      "actual": "The logs were dropped during the deploy.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B17-001",
+      "class": "sound_alike_common_phrase",
+      "outcome": "reason_mismatch",
+      "expected": "The token is an opaque object.",
+      "actual": "The token is an opaque object.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B18-001",
+      "class": "script_shift",
+      "outcome": "reason_mismatch",
+      "expected": "\u0906\u0926\u093f\u0924\u094d\u092f \u0928\u093e\u0930\u093e\u092f\u0923\u0928 \u0915\u094b \u092a\u0940\u0906\u0930 \u092d\u0947\u091c \u0926\u094b\u0964",
+      "actual": "\u0906\u0926\u093f\u0924\u094d\u092f \u0928\u093e\u0930\u093e\u092f\u0923\u0928 \u0915\u094b \u092a\u0940\u0906\u0930 \u092d\u0947\u091c \u0926\u094b\u0964",
+      "expected_reason": "script_mismatch",
+      "actual_reason": "no_candidate",
+      "note": ""
+    },
+    {
+      "case_id": "B18-002",
+      "class": "script_shift",
+      "outcome": "reason_mismatch",
+      "expected": "Ask Meera Sharma to review it.",
+      "actual": "Ask Meera Sharma to review it.",
+      "expected_reason": "script_mismatch",
+      "actual_reason": "no_candidate",
+      "note": ""
+    }
+  ],
+  "learning": {
+    "cases": 15,
+    "passed": 15,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "failures": []
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/language-memory-handler/schema/case.schema.json",
+  "title": "LMH evaluation case",
+  "description": "One case in the Tier C adversarial suite. Two shapes: an APPLICATION case asserts what happens to a piece of text given a memory state; a LEARNING case asserts how memory changes given a piece of evidence. Both are validated by tests/test_fixture_integrity.py, which runs before the engine does.",
+  "type": "object",
+  "required": ["case_id", "kind", "class", "tier", "rationale"],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^[A-Z]+[0-9]*-[0-9]{3}$",
+      "description": "Stable. Never renumbered - a result from an old run must stay comparable."
+    },
+    "kind": { "enum": ["application", "learning"] },
+    "class": {
+      "type": "string",
+      "description": "Taxonomy class id from REPORT.md §14.1. Results are reported per class."
+    },
+    "tier": { "enum": ["A", "B", "C", "D"] },
+    "authored_before_engine": {
+      "type": "boolean",
+      "default": true,
+      "description": "False marks a case added after seeing engine behaviour. Reported separately, because a suite of post-hoc cases is not an evaluation."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 12,
+      "description": "Why this case exists. Required - a case nobody can justify is a case nobody should trust."
+    },
+    "expect": { "enum": ["apply", "propose", "abstain", "noop"] },
+    "given": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "asr": { "type": "string" },
+        "formatted": { "type": "string" },
+        "app": { "type": ["string", "null"] },
+        "persona": { "type": ["string", "null"] },
+        "surrounding_text": { "type": ["string", "null"] },
+        "clock": { "type": ["string", "null"], "description": "ISO-8601. Pins time for decay-sensitive cases." },
+        "memory_overrides": {
+          "type": ["object", "null"],
+          "description": "Patches applied to persona_seed.json for this case only. Keys are lexeme ids.",
+          "additionalProperties": true
+        },
+        "observation": {
+          "type": ["object", "null"],
+          "description": "Learning cases only: the evidence being fed in.",
+          "additionalProperties": true
+        },
+        "observations": {
+          "type": ["array", "null"],
+          "description": "Learning cases only: an ordered sequence of evidence.",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "then": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "output": { "type": "string", "description": "Expected memory-aware text." },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["from", "to"],
+            "additionalProperties": false,
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "lexeme_id": { "type": "string" }
+            }
+          }
+        },
+        "reason": {
+          "type": "string",
+          "description": "Expected primary reason code. Asserting the reason as well as the output is what stops a case passing for the wrong cause."
+        },
+        "max_llm_calls": { "type": "integer", "minimum": 0 },
+        "memory_delta": {
+          "type": ["object", "null"],
+          "description": "Learning cases only: the expected change to memory state.",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "application" } }, "required": ["kind"] },
+      "then": { "required": ["expect", "given", "then"] }
+    },
+    {
+      "if": { "properties": { "kind": { "const": "learning" } }, "required": ["kind"] },
+      "then": { "required": ["given", "then"] }
+    }
+  ]
+}

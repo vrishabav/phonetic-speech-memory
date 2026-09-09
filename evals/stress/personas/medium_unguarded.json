@@ -1,0 +1,2492 @@
+{
+  "$comment": "Generated stress persona 'medium_unguarded' - 104 lexemes, guards=OFF. Reproducible from evals/stress/generate.py with seed 20260906.",
+  "persona": {
+    "name": "medium_unguarded",
+    "clock": "2026-01-15T09:00:00+00:00"
+  },
+  "lexemes": [
+    {
+      "id": "lex.medium_unguarded.0",
+      "canonical": "npm",
+      "kind": "code_symbol",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.1",
+      "canonical": "Meenakshi Mahadevan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "meenakshi mahadewan",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "minakshi mahadevan",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.2",
+      "canonical": "Narayanan Mukherjee",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "naraianan mukherjee",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "naraianan mukherjee",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.3",
+      "canonical": "Vidyasagar Nambiar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "weedyasagar nambiar",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.4",
+      "canonical": "Aishwarya Padmanabhan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aeeshwaria padmanabhan",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.5",
+      "canonical": "Gayathri Iyer",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "gayathree iyer",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.6",
+      "canonical": "Harshvardhan Krishnamurthy",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "harshvardhan krishnamurthhi",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.7",
+      "canonical": "Madhusudan Ranganathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "maadhoosudan ranganathan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.8",
+      "canonical": "Ishaan Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "ishan vaidyanathan",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.9",
+      "canonical": "Bengaluru",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "bengaalooru",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.10",
+      "canonical": "Purushottam Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "purushhottam chattopadhyay",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.11",
+      "canonical": "Nachiketa Padmanabhan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "nachiketha padmanabhan",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "nacheeketa padmanabhan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.12",
+      "canonical": "Nachiketa Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "nacheeketa chattopadhyay",
+          "provenance": "observed",
+          "count": 5
+        },
+        {
+          "form": "nachiketha chattopadhyay",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.13",
+      "canonical": "Dhruv",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "dhruw",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.14",
+      "canonical": "Shreyaa",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "shreya",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.15",
+      "canonical": "Bhaskar Kulkarni",
+      "kind": "person",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.16",
+      "canonical": "Yashodhara",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "yashodara",
+          "provenance": "observed",
+          "count": 5
+        },
+        {
+          "form": "yaashodara",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.17",
+      "canonical": "Swaminathan Mukherjee",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "swaminathhan mukherji",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.18",
+      "canonical": "WER",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "ver",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.19",
+      "canonical": "Anjali Nambiar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aanjali nambiar",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.20",
+      "canonical": "vaani-gateway",
+      "kind": "code_symbol",
+      "variants": [
+        {
+          "form": "vaani-gathevay",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.21",
+      "canonical": "Keerthana Balasubramanian",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "keertana balasubramanian",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.22",
+      "canonical": "Nandini Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "naandini bandyopadhyay",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.23",
+      "canonical": "Mysuru",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "myshuru",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.24",
+      "canonical": "Anirudh Ghoshal",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aneerudh ghosal",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.25",
+      "canonical": "Keerthana Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kirthhana vaidyanathan",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "keerthaana vaidyanathan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.27",
+      "canonical": "Madhusudan Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "madoosudan bandyopadhyay",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.28",
+      "canonical": "Madhusudan Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "madhoosudan vaidyanathan",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.29",
+      "canonical": "pnpm",
+      "kind": "code_symbol",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.30",
+      "canonical": "Omkar Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "omkar shengupta",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.31",
+      "canonical": "Tejaswini Ghoshal",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "tejaswini ghosal",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.32",
+      "canonical": "Girish Gopalakrishnan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "geerishh gopalakrishnan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.35",
+      "canonical": "Subramanian Balasubramanian",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "shubramaneean balasubramanian",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.36",
+      "canonical": "Chaitanya Balasubramanian",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "chaitanya balasoobramanian",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.37",
+      "canonical": "Uma",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "umaa",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.38",
+      "canonical": "Vishwanathan Sundaram",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "vishvanathan sundaram",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.39",
+      "canonical": "Raghunath Nambiar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "raaghunath nambiar",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.40",
+      "canonical": "Kaveri Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kaveree sengupta",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.41",
+      "canonical": "Nandini Deshpande",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "naandini deshpande",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.42",
+      "canonical": "Nandini Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "naandini chattopadhyay",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.44",
+      "canonical": "Vidyasagar Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "vidyaasagar vaidyanathhan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.45",
+      "canonical": "Keerthana",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "keerthhana",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.46",
+      "canonical": "MLOps",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "mlopsh",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.48",
+      "canonical": "Omkar Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "omkar chattopadhiay",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.49",
+      "canonical": "akash-scheduler",
+      "kind": "code_symbol",
+      "variants": [
+        {
+          "form": "akash-schedooler",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.50",
+      "canonical": "Meenakshi Iyengar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "meenakshhi iyengar",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.51",
+      "canonical": "Gayathri Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "gaayathri chattopadhyay",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.52",
+      "canonical": "Bhavana",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "bhawana",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.53",
+      "canonical": "Pranav Ghoshal",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "praanav ghoshal",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.54",
+      "canonical": "Keerthana Krishnamurthy",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "keerthana kreeshhnamurthy",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "keertana krishnamurthy",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.56",
+      "canonical": "Chaitanya Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "chaaithanya sengupta",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "chaitanya sengoopta",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.57",
+      "canonical": "Vishwanathan Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "vishwanathan sengoopta",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.58",
+      "canonical": "Rukmini",
+      "kind": "person",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.59",
+      "canonical": "Arundhati Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aarundhati chattopadhyai",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "aroondhati chattopadhyai",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.60",
+      "canonical": "Kanchipuram",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "kancheepooram",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.61",
+      "canonical": "Vaishnavi Kulkarni",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "vaishhnavi kulkarni",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "vaisnavi kulkarni",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.63",
+      "canonical": "Thiruvananthapuram",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "tiroovananthapuram",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.64",
+      "canonical": "Aaditya Deshpande",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aaditia despande",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "aaditia deshpande",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.65",
+      "canonical": "Anjali Deshpande",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aanjali deshpande",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.66",
+      "canonical": "Indrajit Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "indrajith shengupta",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.67",
+      "canonical": "Tanvi",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "taanvi",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.69",
+      "canonical": "Nandini Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "nandeeni vaidyanathan",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "naandini vaidyanathan",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.70",
+      "canonical": "Siddharth Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "siddharthh sengupta",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.71",
+      "canonical": "Raghunath Iyer",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "raghunathh iyer",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.73",
+      "canonical": "Ananya Mahadevan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aananya mahadevan",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.74",
+      "canonical": "Swaminathan Sengupta",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "shwaminathan sengupta",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "shwaminathan sengupta",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.75",
+      "canonical": "Grad-CAM",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "graad-cam",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.76",
+      "canonical": "Manjunath Iyengar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "manjoonath iyengar",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "maanjoonath iyengar",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.77",
+      "canonical": "Jayashree Sundaram",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "jayashri sundaram",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.78",
+      "canonical": "Mrinalini Kulkarni",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "mreenaalini kulkarni",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.79",
+      "canonical": "Parvathy Gopalakrishnan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "paarvathy gopalakrisnan",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.80",
+      "canonical": "Bhaskar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "bashkar",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.82",
+      "canonical": "ZDR",
+      "kind": "term",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.83",
+      "canonical": "Hemalatha Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "hemalatha vaeedyanathan",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.84",
+      "canonical": "Yashodhara Padmanabhan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "iashhodhara padmanabhan",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.85",
+      "canonical": "Saraswathi Bhattacharya",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "saraswathi bhattacharia",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.86",
+      "canonical": "CTC",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "cthc",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.87",
+      "canonical": "Ishaan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "isan",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "isan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.88",
+      "canonical": "Devika Ghoshal",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "devika ghoshhal",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.90",
+      "canonical": "Abhigyan Mukherjee",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "abhigian mukherjee",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.91",
+      "canonical": "Karthik Balasubramanian",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kartheek balashubramanian",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.92",
+      "canonical": "Subramanian Chakraborty",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "subraamanian chakraborty",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.93",
+      "canonical": "Vishwanathan Bhattacharya",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "vishvanathan bhattacharya",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.95",
+      "canonical": "Deepika Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "deepika bandiopadhyay",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.96",
+      "canonical": "Meenakshi",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "meenaaksi",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.98",
+      "canonical": "gRPC",
+      "kind": "term",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.99",
+      "canonical": "Kalyani Nambiar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kaaliani nambiar",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "kaalyani nambiar",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.100",
+      "canonical": "Meenakshi Chattopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "meenakshi chathtopadhyai",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.101",
+      "canonical": "Kozhikode",
+      "kind": "place",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.102",
+      "canonical": "Karthik Mahadevan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kartik mahadevan",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "kaarthhik mahadevan",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.103",
+      "canonical": "Sowmya Sundaram",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "sowmia sundaram",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.104",
+      "canonical": "Vishwanathan Chakraborty",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "veeshwanathan chakraborty",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.105",
+      "canonical": "Mrinalini",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "mrinaalini",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.106",
+      "canonical": "OTel",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "othel",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.108",
+      "canonical": "Tejaswini Vaidyanathan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "tejaswini waidyanatan",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.109",
+      "canonical": "Madhusudan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "madusudan",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "madhooshudan",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.110",
+      "canonical": "Kalyani",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "kaliani",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.111",
+      "canonical": "Arundhati Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "arundhatee bandyopadhyay",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.112",
+      "canonical": "Chaitanya",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "chaaithanya",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.113",
+      "canonical": "Dhruv Mahadevan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "druv mahadevan",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "dhruw mahadevan",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.115",
+      "canonical": "Parvathy",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "parvati",
+          "provenance": "observed",
+          "count": 5
+        },
+        {
+          "form": "paarvathy",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.117",
+      "canonical": "Anjali Gopalakrishnan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aanjali gopalakrishnan",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.118",
+      "canonical": "Pranav",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "praanaw",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.medium_unguarded.119",
+      "canonical": "Tanvi Venkataraman",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "thanvi venkataraman",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "thanwi venkataraman",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "a": "lex.medium_unguarded.101",
+      "b": "lex.medium_unguarded.1",
+      "rel": "cooccurs",
+      "weight": 0.79
+    },
+    {
+      "a": "lex.medium_unguarded.54",
+      "b": "lex.medium_unguarded.83",
+      "rel": "cooccurs",
+      "weight": 0.8
+    },
+    {
+      "a": "lex.medium_unguarded.91",
+      "b": "lex.medium_unguarded.84",
+      "rel": "cooccurs",
+      "weight": 0.52
+    },
+    {
+      "a": "lex.medium_unguarded.5",
+      "b": "lex.medium_unguarded.117",
+      "rel": "cooccurs",
+      "weight": 0.66
+    },
+    {
+      "a": "lex.medium_unguarded.83",
+      "b": "lex.medium_unguarded.42",
+      "rel": "cooccurs",
+      "weight": 0.46
+    },
+    {
+      "a": "lex.medium_unguarded.13",
+      "b": "lex.medium_unguarded.57",
+      "rel": "cooccurs",
+      "weight": 0.49
+    },
+    {
+      "a": "lex.medium_unguarded.78",
+      "b": "lex.medium_unguarded.108",
+      "rel": "cooccurs",
+      "weight": 0.64
+    },
+    {
+      "a": "lex.medium_unguarded.10",
+      "b": "lex.medium_unguarded.1",
+      "rel": "cooccurs",
+      "weight": 0.41
+    },
+    {
+      "a": "lex.medium_unguarded.74",
+      "b": "lex.medium_unguarded.75",
+      "rel": "cooccurs",
+      "weight": 0.86
+    },
+    {
+      "a": "lex.medium_unguarded.63",
+      "b": "lex.medium_unguarded.69",
+      "rel": "cooccurs",
+      "weight": 0.57
+    },
+    {
+      "a": "lex.medium_unguarded.70",
+      "b": "lex.medium_unguarded.28",
+      "rel": "cooccurs",
+      "weight": 0.67
+    },
+    {
+      "a": "lex.medium_unguarded.75",
+      "b": "lex.medium_unguarded.102",
+      "rel": "cooccurs",
+      "weight": 0.44
+    },
+    {
+      "a": "lex.medium_unguarded.36",
+      "b": "lex.medium_unguarded.48",
+      "rel": "cooccurs",
+      "weight": 0.56
+    },
+    {
+      "a": "lex.medium_unguarded.22",
+      "b": "lex.medium_unguarded.67",
+      "rel": "cooccurs",
+      "weight": 0.74
+    },
+    {
+      "a": "lex.medium_unguarded.77",
+      "b": "lex.medium_unguarded.40",
+      "rel": "cooccurs",
+      "weight": 0.77
+    },
+    {
+      "a": "lex.medium_unguarded.56",
+      "b": "lex.medium_unguarded.37",
+      "rel": "cooccurs",
+      "weight": 0.9
+    },
+    {
+      "a": "lex.medium_unguarded.18",
+      "b": "lex.medium_unguarded.4",
+      "rel": "cooccurs",
+      "weight": 0.79
+    }
+  ]
+}

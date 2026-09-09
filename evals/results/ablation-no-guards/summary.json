@@ -1,0 +1,422 @@
+{
+  "generated_at": "2026-09-08T19:05:13.201755+00:00",
+  "settings": {
+    "clock": "clock.system",
+    "phonetics": "phonetics.dmetaphone",
+    "store": "store.memory",
+    "index": "index.inmemory",
+    "llm": "llm.stub",
+    "formatter": "formatter.passthrough",
+    "policies": [
+      "suppression",
+      "verbatim",
+      "already_canonical",
+      "script_fit",
+      "scope_fit",
+      "exact_variant",
+      "phonetic",
+      "cooccurrence",
+      "conflict",
+      "recency"
+    ],
+    "allow_llm_adjudication": true,
+    "allow_prompt_injection": true,
+    "verify_output": true,
+    "thresholds": {
+      "retrieval_max_distance": 0.34,
+      "apply_score": 0.55,
+      "propose_score": 0.3,
+      "activation_confidence": 0.6,
+      "activation_strength": 1.5,
+      "dormancy_confidence": 0.35,
+      "decay_half_life_days": 90.0,
+      "learn_max_phonetic_distance": 0.45,
+      "reverts_to_suppress": 2
+    },
+    "weights": {
+      "declared": 3.0,
+      "instruction": 3.0,
+      "post_edit": 1.0,
+      "repetition": 0.5,
+      "ambient": 0.25,
+      "imported": 1.0,
+      "revert": 2.0,
+      "dismissal": 1.0
+    }
+  },
+  "totals": {
+    "cases": 69,
+    "passed": 52,
+    "failed": 17,
+    "pass_rate": 0.7536
+  },
+  "interventions": {
+    "useful_intervention": 28,
+    "harmful_intervention": 11,
+    "reason_mismatch": 6,
+    "correct_abstention": 24
+  },
+  "positive_cases": {
+    "n": 37,
+    "useful": 28,
+    "missed": 0,
+    "harmful": 4
+  },
+  "negative_cases": {
+    "n": 32,
+    "correct_abstention": 24,
+    "false_intervention": 7,
+    "false_intervention_rate": 0.2188
+  },
+  "cost": {
+    "llm_calls_total": 0,
+    "llm_calls_per_case": 0.0,
+    "zero_call_cases": 69
+  },
+  "latency_ms": {
+    "p50": 0.922,
+    "p95": 2.812,
+    "max": 10.392
+  },
+  "by_class": {
+    "acronym_collapse": {
+      "useful_intervention": 3
+    },
+    "already_canonical": {
+      "correct_abstention": 2
+    },
+    "ambiguous_conflict": {
+      "correct_abstention": 1
+    },
+    "casing": {
+      "useful_intervention": 2
+    },
+    "common_word_sense": {
+      "harmful_intervention": 6
+    },
+    "conflict_resolved": {
+      "useful_intervention": 1,
+      "correct_abstention": 1
+    },
+    "dormant_unsupported": {
+      "correct_abstention": 1
+    },
+    "homophone_spelling": {
+      "useful_intervention": 4,
+      "harmful_intervention": 1
+    },
+    "indic_script": {
+      "useful_intervention": 2,
+      "reason_mismatch": 1
+    },
+    "multi_token_span": {
+      "useful_intervention": 3,
+      "harmful_intervention": 1,
+      "reason_mismatch": 1
+    },
+    "near_threshold": {
+      "correct_abstention": 1
+    },
+    "no_candidate": {
+      "correct_abstention": 3
+    },
+    "not_phonetic": {
+      "correct_abstention": 1
+    },
+    "phonetic_stranger": {
+      "correct_abstention": 2
+    },
+    "preferred_exonym": {
+      "useful_intervention": 1
+    },
+    "real_word_hijack": {
+      "useful_intervention": 2,
+      "reason_mismatch": 3
+    },
+    "revival": {
+      "useful_intervention": 1
+    },
+    "scope_carryover": {
+      "useful_intervention": 1
+    },
+    "scope_mismatch": {
+      "correct_abstention": 1
+    },
+    "script_preference": {
+      "useful_intervention": 1
+    },
+    "script_shift": {
+      "correct_abstention": 2
+    },
+    "segmentation": {
+      "useful_intervention": 3
+    },
+    "sigil_handle": {
+      "useful_intervention": 1
+    },
+    "sound_alike_common_phrase": {
+      "reason_mismatch": 1
+    },
+    "sound_alike_common_word": {
+      "harmful_intervention": 2
+    },
+    "standing_instruction": {
+      "useful_intervention": 2,
+      "harmful_intervention": 1
+    },
+    "suppressed_by_revert": {
+      "correct_abstention": 1
+    },
+    "unknown_term": {
+      "correct_abstention": 2
+    },
+    "unseen_mishearing": {
+      "useful_intervention": 1,
+      "correct_abstention": 1
+    },
+    "verbatim_region": {
+      "correct_abstention": 2
+    },
+    "weak_evidence": {
+      "correct_abstention": 1
+    },
+    "wrong_referent": {
+      "correct_abstention": 2
+    }
+  },
+  "by_expected_reason": {
+    "already_canonical": {
+      "pass": 3
+    },
+    "ambiguous_conflict": {
+      "pass": 2
+    },
+    "below_activation_threshold": {
+      "pass": 1
+    },
+    "below_threshold": {
+      "pass": 2
+    },
+    "common_word_guard": {
+      "fail": 4
+    },
+    "context_supported": {
+      "pass": 3,
+      "fail": 6
+    },
+    "dormant_without_support": {
+      "pass": 1
+    },
+    "exact_observed_variant": {
+      "pass": 23,
+      "fail": 2
+    },
+    "guard_condition_met": {
+      "fail": 4
+    },
+    "no_candidate": {
+      "pass": 7
+    },
+    "out_of_scope": {
+      "pass": 1
+    },
+    "phonetic_high_confidence": {
+      "pass": 1
+    },
+    "script_mismatch": {
+      "pass": 2
+    },
+    "single_observation": {
+      "pass": 2
+    },
+    "standing_instruction": {
+      "pass": 1,
+      "fail": 1
+    },
+    "suppressed": {
+      "pass": 1
+    },
+    "verbatim_region": {
+      "pass": 2
+    }
+  },
+  "failures": [
+    {
+      "case_id": "A1-002",
+      "class": "homophone_spelling",
+      "outcome": "harmful_intervention",
+      "expected": "I told Aadith Narayanan the numbers were stale.",
+      "actual": "I told Aadith Narayanan the numbers WER stale.",
+      "expected_reason": "exact_observed_variant",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A2-002",
+      "class": "real_word_hijack",
+      "outcome": "reason_mismatch",
+      "expected": "I pushed the fix to Kivi last night.",
+      "actual": "I pushed the fix to Kivi last night.",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A2-003",
+      "class": "real_word_hijack",
+      "outcome": "reason_mismatch",
+      "expected": "Saaras is dropping the last word of every utterance.",
+      "actual": "Saaras is dropping the last word of every utterance.",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A2-004",
+      "class": "real_word_hijack",
+      "outcome": "reason_mismatch",
+      "expected": "Mayura translated the Hindi line incorrectly.",
+      "actual": "Mayura translated the Hindi line incorrectly.",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A8-002",
+      "class": "standing_instruction",
+      "outcome": "harmful_intervention",
+      "expected": "Zero-data retention (ZDR) is on for this account.",
+      "actual": "ZDR is on for this account.",
+      "expected_reason": "standing_instruction",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "A14-003",
+      "class": "indic_script",
+      "outcome": "reason_mismatch",
+      "expected": "\u092e\u0948\u0902\u0928\u0947 Kivi service \u0915\u094b restart \u0915\u093f\u092f\u093e\u0964",
+      "actual": "\u092e\u0948\u0902\u0928\u0947 Kivi service \u0915\u094b restart \u0915\u093f\u092f\u093e\u0964",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B1-001",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "I ate a kiwi for breakfast.",
+      "actual": "I ate a Kivi for breakfast.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B1-002",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "The kiwi fruit market in Bengaluru is seasonal.",
+      "actual": "The Kivi fruit market in Bengaluru is seasonal.",
+      "expected_reason": "exact_observed_variant",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B1-003",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "Sarah's desk is the one by the window.",
+      "actual": "Saaras desk is the one by the window.",
+      "expected_reason": "guard_condition_met",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B1-004",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "My aura reading was completely off that day.",
+      "actual": "Mayura reading was completely off that day.",
+      "expected_reason": "guard_condition_met",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B1-005",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "Restart the server and check uptime.",
+      "actual": "Restart the Sarvam and check uptime.",
+      "expected_reason": "guard_condition_met",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B16-001",
+      "class": "sound_alike_common_word",
+      "outcome": "harmful_intervention",
+      "expected": "The numbers were set before the run.",
+      "actual": "The numbers WER set before the run.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "phonetic_high_confidence",
+      "note": ""
+    },
+    {
+      "case_id": "B16-002",
+      "class": "sound_alike_common_word",
+      "outcome": "harmful_intervention",
+      "expected": "The logs were dropped during the deploy.",
+      "actual": "The logs WER dropped during the deploy.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "phonetic_high_confidence",
+      "note": ""
+    },
+    {
+      "case_id": "B17-001",
+      "class": "sound_alike_common_phrase",
+      "outcome": "reason_mismatch",
+      "expected": "The token is an opaque object.",
+      "actual": "The token is an opaque object.",
+      "expected_reason": "common_word_guard",
+      "actual_reason": "below_threshold",
+      "note": ""
+    },
+    {
+      "case_id": "GX-001",
+      "class": "common_word_sense",
+      "outcome": "harmful_intervention",
+      "expected": "I finished the kiwi smoothie before the standup.",
+      "actual": "I finished the Kivi smoothie before the standup.",
+      "expected_reason": "guard_condition_met",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "MX-001",
+      "class": "multi_token_span",
+      "outcome": "harmful_intervention",
+      "expected": "Aadith Narayanan is debugging Kivi while I finish the kiwi smoothie.",
+      "actual": "Aadith Narayanan is debugging Kivi while I finish the Kivi smoothie.",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "MX-003",
+      "class": "multi_token_span",
+      "outcome": "reason_mismatch",
+      "expected": "Kivi and Kivi again in the same paragraph.",
+      "actual": "Kivi and Kivi again in the same paragraph.",
+      "expected_reason": "context_supported",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    }
+  ],
+  "learning": {
+    "cases": 15,
+    "passed": 15,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "failures": []
+  }
+}

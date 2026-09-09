@@ -1,0 +1,28 @@
+# Runtime.
+#
+# Version RANGES, not exact pins. A hard pin looks reproducible and is actually
+# a landmine: the pinned build only has wheels for the Python versions that
+# existed when it was released, so a reviewer on a newer interpreter falls back
+# to building from source and fails on something unrelated to this project.
+# Floors are set high enough to guarantee a wheel on every supported Python
+# (3.11-3.14); ceilings only where a major version would be breaking.
+#
+# Verified to resolve binary-only on cp311, cp312, cp313 and cp314 - see
+# `make check-wheels`, which is what actually enforces this claim.
+
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.34
+jinja2>=3.1
+sqlalchemy>=2.0.36,<2.1
+alembic>=1.14
+pydantic>=2.10,<3.0
+httpx>=0.28,<1.0
+python-dotenv>=1.0
+
+# Phonetics, required tier. jellyfish ships abi3 wheels, rapidfuzz ships
+# per-version wheels - hence the 3.14.0 floor, which is its first cp314 build.
+jellyfish>=1.2.1
+rapidfuzz>=3.14.0
+
+# Evaluation
+jsonschema>=4.23

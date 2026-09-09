@@ -1,0 +1,277 @@
+{
+  "generated_at": "2026-09-08T19:05:11.948565+00:00",
+  "settings": {
+    "clock": "clock.system",
+    "phonetics": "phonetics.dmetaphone",
+    "store": "store.memory",
+    "index": "index.inmemory",
+    "llm": "llm.stub",
+    "formatter": "formatter.passthrough",
+    "policies": [
+      "suppression",
+      "verbatim",
+      "already_canonical",
+      "script_fit",
+      "scope_fit",
+      "exact_variant",
+      "phonetic",
+      "common_word_guard",
+      "cooccurrence",
+      "recency"
+    ],
+    "allow_llm_adjudication": true,
+    "allow_prompt_injection": true,
+    "verify_output": true,
+    "thresholds": {
+      "retrieval_max_distance": 0.34,
+      "apply_score": 0.55,
+      "propose_score": 0.3,
+      "activation_confidence": 0.6,
+      "activation_strength": 1.5,
+      "dormancy_confidence": 0.35,
+      "decay_half_life_days": 90.0,
+      "learn_max_phonetic_distance": 0.45,
+      "reverts_to_suppress": 2
+    },
+    "weights": {
+      "declared": 3.0,
+      "instruction": 3.0,
+      "post_edit": 1.0,
+      "repetition": 0.5,
+      "ambient": 0.25,
+      "imported": 1.0,
+      "revert": 2.0,
+      "dismissal": 1.0
+    }
+  },
+  "totals": {
+    "cases": 69,
+    "passed": 66,
+    "failed": 3,
+    "pass_rate": 0.9565
+  },
+  "interventions": {
+    "useful_intervention": 36,
+    "harmful_intervention": 1,
+    "correct_abstention": 30,
+    "reason_mismatch": 2
+  },
+  "positive_cases": {
+    "n": 37,
+    "useful": 36,
+    "missed": 0,
+    "harmful": 1
+  },
+  "negative_cases": {
+    "n": 32,
+    "correct_abstention": 30,
+    "false_intervention": 0,
+    "false_intervention_rate": 0.0
+  },
+  "cost": {
+    "llm_calls_total": 0,
+    "llm_calls_per_case": 0.0,
+    "zero_call_cases": 69
+  },
+  "latency_ms": {
+    "p50": 0.915,
+    "p95": 2.893,
+    "max": 10.675
+  },
+  "by_class": {
+    "acronym_collapse": {
+      "useful_intervention": 3
+    },
+    "already_canonical": {
+      "correct_abstention": 2
+    },
+    "ambiguous_conflict": {
+      "reason_mismatch": 1
+    },
+    "casing": {
+      "useful_intervention": 2
+    },
+    "common_word_sense": {
+      "correct_abstention": 5,
+      "useful_intervention": 1
+    },
+    "conflict_resolved": {
+      "useful_intervention": 1,
+      "correct_abstention": 1
+    },
+    "dormant_unsupported": {
+      "correct_abstention": 1
+    },
+    "homophone_spelling": {
+      "useful_intervention": 5
+    },
+    "indic_script": {
+      "useful_intervention": 3
+    },
+    "multi_token_span": {
+      "useful_intervention": 5
+    },
+    "near_threshold": {
+      "correct_abstention": 1
+    },
+    "no_candidate": {
+      "correct_abstention": 3
+    },
+    "not_phonetic": {
+      "correct_abstention": 1
+    },
+    "phonetic_stranger": {
+      "correct_abstention": 2
+    },
+    "preferred_exonym": {
+      "useful_intervention": 1
+    },
+    "real_word_hijack": {
+      "useful_intervention": 5
+    },
+    "revival": {
+      "useful_intervention": 1
+    },
+    "scope_carryover": {
+      "useful_intervention": 1
+    },
+    "scope_mismatch": {
+      "correct_abstention": 1
+    },
+    "script_preference": {
+      "useful_intervention": 1
+    },
+    "script_shift": {
+      "correct_abstention": 2
+    },
+    "segmentation": {
+      "useful_intervention": 3
+    },
+    "sigil_handle": {
+      "useful_intervention": 1
+    },
+    "sound_alike_common_phrase": {
+      "correct_abstention": 1
+    },
+    "sound_alike_common_word": {
+      "correct_abstention": 2
+    },
+    "standing_instruction": {
+      "useful_intervention": 2,
+      "harmful_intervention": 1
+    },
+    "suppressed_by_revert": {
+      "correct_abstention": 1
+    },
+    "unknown_term": {
+      "correct_abstention": 2
+    },
+    "unseen_mishearing": {
+      "useful_intervention": 1,
+      "correct_abstention": 1
+    },
+    "verbatim_region": {
+      "correct_abstention": 2
+    },
+    "weak_evidence": {
+      "correct_abstention": 1
+    },
+    "wrong_referent": {
+      "correct_abstention": 1,
+      "reason_mismatch": 1
+    }
+  },
+  "by_expected_reason": {
+    "already_canonical": {
+      "pass": 3
+    },
+    "ambiguous_conflict": {
+      "fail": 2
+    },
+    "below_activation_threshold": {
+      "pass": 1
+    },
+    "below_threshold": {
+      "pass": 2
+    },
+    "common_word_guard": {
+      "pass": 4
+    },
+    "context_supported": {
+      "pass": 9
+    },
+    "dormant_without_support": {
+      "pass": 1
+    },
+    "exact_observed_variant": {
+      "pass": 25
+    },
+    "guard_condition_met": {
+      "pass": 4
+    },
+    "no_candidate": {
+      "pass": 7
+    },
+    "out_of_scope": {
+      "pass": 1
+    },
+    "phonetic_high_confidence": {
+      "pass": 1
+    },
+    "script_mismatch": {
+      "pass": 2
+    },
+    "single_observation": {
+      "pass": 2
+    },
+    "standing_instruction": {
+      "pass": 1,
+      "fail": 1
+    },
+    "suppressed": {
+      "pass": 1
+    },
+    "verbatim_region": {
+      "pass": 2
+    }
+  },
+  "failures": [
+    {
+      "case_id": "A8-002",
+      "class": "standing_instruction",
+      "outcome": "harmful_intervention",
+      "expected": "Zero-data retention (ZDR) is on for this account.",
+      "actual": "ZDR is on for this account.",
+      "expected_reason": "standing_instruction",
+      "actual_reason": "exact_observed_variant",
+      "note": ""
+    },
+    {
+      "case_id": "B2-001",
+      "class": "ambiguous_conflict",
+      "outcome": "reason_mismatch",
+      "expected": "Ask Shreya to send the deck across.",
+      "actual": "Ask Shreya to send the deck across.",
+      "expected_reason": "ambiguous_conflict",
+      "actual_reason": "single_observation",
+      "note": ""
+    },
+    {
+      "case_id": "B14-002",
+      "class": "wrong_referent",
+      "outcome": "reason_mismatch",
+      "expected": "Shreya Nair from legal will review it.",
+      "actual": "Shreya Nair from legal will review it.",
+      "expected_reason": "ambiguous_conflict",
+      "actual_reason": "single_observation",
+      "note": ""
+    }
+  ],
+  "learning": {
+    "cases": 15,
+    "passed": 15,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "failures": []
+  }
+}

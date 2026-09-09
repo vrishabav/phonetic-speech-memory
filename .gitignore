@@ -1,0 +1,36 @@
+# --- secrets -------------------------------------------------------------- #
+# The API key lives in .env, which is never committed. .env.example documents
+# the variable names with empty values.
+.env
+.env.*
+!.env.example
+
+# --- scratch --------------------------------------------------------------- #
+# Patch files and editor leftovers are never part of the repository.
+*.patch
+*.orig
+*.rej
+
+# --- generated at runtime -------------------------------------------------- #
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+data/
+*.db
+*.db-wal
+*.db-shm
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- what is NOT ignored, and why ------------------------------------------ #
+# evals/results/ IS committed. The brief asks for generated evaluation results
+# as part of the submission, and a claim in the README that cannot be checked
+# against the run that produced it is not evidence. Everything under it is
+# regenerable with `make eval` and `make explore`.
+#
+# evals/cassettes/ IS committed: replaying recorded model responses is what
+# makes the evaluation runnable without an API key.

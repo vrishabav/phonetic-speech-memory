@@ -1,0 +1,142 @@
+{
+  "s1_generalisation": {
+    "small_unseen": {
+      "n_lexemes": 24,
+      "known_form_recall": 0.8889,
+      "false_fires": 0,
+      "neutral_sentences": 1500,
+      "false_fire_rate": 0.0
+    },
+    "medium_unguarded": {
+      "n_lexemes": 104,
+      "known_form_recall": 0.9831,
+      "false_fires": 0,
+      "neutral_sentences": 1500,
+      "false_fire_rate": 0.0
+    },
+    "large_unguarded": {
+      "n_lexemes": 367,
+      "known_form_recall": 0.9892,
+      "false_fires": 0,
+      "neutral_sentences": 1500,
+      "false_fire_rate": 0.0
+    }
+  },
+  "s2_false_activation": {
+    "n_lexemes": 367,
+    "sentences": 4000,
+    "gate_open_rate": 0.28675,
+    "false_fires": 0,
+    "false_fire_rate": 0.0,
+    "examples": []
+  },
+  "s3_threshold_sensitivity": {
+    "apply_score=0.35": 65,
+    "apply_score=0.4": 65,
+    "apply_score=0.45": 66,
+    "apply_score=0.5": 68,
+    "apply_score=0.55": 68,
+    "apply_score=0.6": 66,
+    "apply_score=0.65": 62,
+    "apply_score=0.7": 49,
+    "apply_score=0.8": 40,
+    "retrieval_max_distance=0.2": 67,
+    "retrieval_max_distance=0.26": 67,
+    "retrieval_max_distance=0.3": 67,
+    "retrieval_max_distance=0.34": 68,
+    "retrieval_max_distance=0.38": 68,
+    "retrieval_max_distance=0.42": 68,
+    "retrieval_max_distance=0.5": 67
+  },
+  "s4_messy_input": {
+    "passed": 16,
+    "failed": 0
+  },
+  "s5_scale": {
+    "small_unseen": {
+      "n": 24,
+      "build_ms": 0.54,
+      "p50_miss_ms": 0.122,
+      "p95_miss_ms": 0.322,
+      "p50_hit_ms": 0.071
+    },
+    "medium_unguarded": {
+      "n": 104,
+      "build_ms": 2.46,
+      "p50_miss_ms": 0.13,
+      "p95_miss_ms": 0.497,
+      "p50_hit_ms": 0.329
+    },
+    "large_unguarded": {
+      "n": 367,
+      "build_ms": 9.49,
+      "p50_miss_ms": 0.138,
+      "p95_miss_ms": 1.016,
+      "p50_hit_ms": 1.039
+    }
+  },
+  "s6_unseen_mishearings": {
+    "n": 94,
+    "retrieved": 89,
+    "retrieval_rate": 0.9468,
+    "fixed": 82,
+    "fixed_rate": 0.8723,
+    "missed": 10,
+    "wrong": 2,
+    "wrong_rate": 0.0213,
+    "sample_misses": [
+      [
+        "Rukmeeni",
+        "Rukmini"
+      ],
+      [
+        "Anjalee Gopalakrishhnan",
+        "Anjali Gopalakrishnan"
+      ],
+      [
+        "Dhroow",
+        "Dhruv"
+      ],
+      [
+        "akashh-scheduler",
+        "akash-scheduler"
+      ],
+      [
+        "Veeshhwanathan Bhattacharya",
+        "Vishwanathan Bhattacharya"
+      ],
+      [
+        "Aaditya Deshhpande",
+        "Aaditya Deshpande"
+      ],
+      [
+        "shhreyaa",
+        "Shreyaa"
+      ],
+      [
+        "Maanjunathh Iyengar",
+        "Manjunath Iyengar"
+      ],
+      [
+        "Misooru",
+        "Mysuru"
+      ],
+      [
+        "eeshaan",
+        "Ishaan"
+      ]
+    ],
+    "sample_wrongs": [
+      [
+        "Keerthhana Krishnamurthi",
+        "Keerthana Krishnamurthy",
+        "Can you loop in Keerthana Krishnamurthi on this."
+      ],
+      [
+        "vaaani-gateway",
+        "vaani-gateway",
+        "Vaani-gateway pushed a fix last night."
+      ]
+    ]
+  }
+}

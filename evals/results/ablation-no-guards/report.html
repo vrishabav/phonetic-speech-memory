@@ -1,0 +1,115 @@
+<!doctype html><meta charset=utf-8><title>LMH evaluation</title>
+<style>
+body{font:14px/1.5 ui-sans-serif,system-ui,sans-serif;margin:2rem auto;max-width:1100px;color:#16161d}
+h1{font-size:1.4rem;margin:0 0 .2rem} .sub{color:#666;margin:0 0 1.5rem}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{text-align:left;border-bottom:2px solid #ddd;padding:6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#666}
+td{border-bottom:1px solid #eee;padding:6px;vertical-align:top}
+tr.bad td{background:#fff4f2} tr.ok td:first-child{color:#137a5a}
+td.t{font-family:ui-monospace,monospace;font-size:11.5px;color:#444}
+pre{background:#f6f6f8;padding:1rem;border-radius:6px;overflow:auto;font-size:12px}
+</style>
+<h1>language-memory-handler - evaluation</h1>
+<p class=sub>52/69 passed (75%) &middot;
+generated 2026-09-08T19:05:13.201755+00:00</p>
+<pre>{
+  &quot;interventions&quot;: {
+    &quot;useful_intervention&quot;: 28,
+    &quot;harmful_intervention&quot;: 11,
+    &quot;reason_mismatch&quot;: 6,
+    &quot;correct_abstention&quot;: 24
+  },
+  &quot;positive_cases&quot;: {
+    &quot;n&quot;: 37,
+    &quot;useful&quot;: 28,
+    &quot;missed&quot;: 0,
+    &quot;harmful&quot;: 4
+  },
+  &quot;negative_cases&quot;: {
+    &quot;n&quot;: 32,
+    &quot;correct_abstention&quot;: 24,
+    &quot;false_intervention&quot;: 7,
+    &quot;false_intervention_rate&quot;: 0.2188
+  },
+  &quot;cost&quot;: {
+    &quot;llm_calls_total&quot;: 0,
+    &quot;llm_calls_per_case&quot;: 0.0,
+    &quot;zero_call_cases&quot;: 69
+  },
+  &quot;latency_ms&quot;: {
+    &quot;p50&quot;: 0.922,
+    &quot;p95&quot;: 2.812,
+    &quot;max&quot;: 10.392
+  }
+}</pre>
+<table><tr><th>case</th><th>class</th><th>expect</th><th>outcome</th>
+<th>expected reason</th><th>actual reason</th><th>output</th></tr>
+<tr class="ok"><td>A1-001</td><td>homophone_spelling</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Ask Aadith Narayanan to review the pull request.</td></tr>
+<tr class="bad"><td>A1-002</td><td>homophone_spelling</td><td>apply</td><td>harmful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>I told Aadith Narayanan the numbers WER stale.</td></tr>
+<tr class="ok"><td>A1-003</td><td>homophone_spelling</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Shreyaa Bhattacharya is on call this week.</td></tr>
+<tr class="ok"><td>A1-004</td><td>homophone_spelling</td><td>apply</td><td>useful_intervention</td><td>context_supported</td><td>context_supported</td><td class=t>Shreyaa Bhattacharya owns the vaani-gateway rollout.</td></tr>
+<tr class="ok"><td>A2-001</td><td>real_word_hijack</td><td>apply</td><td>useful_intervention</td><td>context_supported</td><td>context_supported</td><td class=t>The Sarvam Kivi service is dropping requests.</td></tr>
+<tr class="bad"><td>A2-002</td><td>real_word_hijack</td><td>apply</td><td>reason_mismatch</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>I pushed the fix to Kivi last night.</td></tr>
+<tr class="bad"><td>A2-003</td><td>real_word_hijack</td><td>apply</td><td>reason_mismatch</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>Saaras is dropping the last word of every utterance.</td></tr>
+<tr class="bad"><td>A2-004</td><td>real_word_hijack</td><td>apply</td><td>reason_mismatch</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>Mayura translated the Hindi line incorrectly.</td></tr>
+<tr class="ok"><td>A2-005</td><td>real_word_hijack</td><td>apply</td><td>useful_intervention</td><td>context_supported</td><td>context_supported</td><td class=t>Saaras and Bulbul are both healthy again.</td></tr>
+<tr class="ok"><td>A3-001</td><td>segmentation</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>vaani-gateway is timing out on cold start.</td></tr>
+<tr class="ok"><td>A3-002</td><td>segmentation</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>The Grad-CAM overlays look wrong on the second head.</td></tr>
+<tr class="ok"><td>A3-003</td><td>segmentation</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>vaani-gateway went down during the deploy.</td></tr>
+<tr class="ok"><td>A4-001</td><td>casing</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>She did her masters at IIT Madras.</td></tr>
+<tr class="ok"><td>A4-002</td><td>casing</td><td>apply</td><td>useful_intervention</td><td>standing_instruction</td><td>standing_instruction</td><td class=t>npm install fails on the CI box.</td></tr>
+<tr class="ok"><td>A5-001</td><td>acronym_collapse</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>We should try RLHF on the reranker.</td></tr>
+<tr class="ok"><td>A5-002</td><td>acronym_collapse</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>ZDR is enabled for this workspace.</td></tr>
+<tr class="ok"><td>A5-003</td><td>acronym_collapse</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Hand this to the MLOps rotation.</td></tr>
+<tr class="ok"><td>A6-001</td><td>sigil_handle</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>I posted the trace in #eng-asr.</td></tr>
+<tr class="ok"><td>A7-001</td><td>preferred_exonym</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>The team is mostly in Bengaluru now.</td></tr>
+<tr class="ok"><td>A8-001</td><td>standing_instruction</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>We shipped it at Sarvam last quarter.</td></tr>
+<tr class="bad"><td>A8-002</td><td>standing_instruction</td><td>apply</td><td>harmful_intervention</td><td>standing_instruction</td><td>exact_observed_variant</td><td class=t>ZDR is on for this account.</td></tr>
+<tr class="ok"><td>A8-003</td><td>standing_instruction</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>vaani-gateway needs a bigger connection pool.</td></tr>
+<tr class="ok"><td>A9-001</td><td>script_preference</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>I told her theek hai and moved on.</td></tr>
+<tr class="ok"><td>A10-001</td><td>multi_token_span</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Shreyaa Bhattacharya and Aadith Narayanan are both out on Friday.</td></tr>
+<tr class="ok"><td>A11-001</td><td>revival</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Rukmini Iyer wrote the original design doc.</td></tr>
+<tr class="ok"><td>A12-001</td><td>conflict_resolved</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Ask Shreyaa Bhattacharya to sign off.</td></tr>
+<tr class="ok"><td>A12-002</td><td>conflict_resolved</td><td>abstain</td><td>correct_abstention</td><td>already_canonical</td><td>already_canonical</td><td class=t>Shreya Menon asked for the revised quote.</td></tr>
+<tr class="ok"><td>A13-001</td><td>unseen_mishearing</td><td>apply</td><td>useful_intervention</td><td>phonetic_high_confidence</td><td>phonetic_high_confidence</td><td class=t>Ask Aadith Narayanan to review the change.</td></tr>
+<tr class="ok"><td>A13-002</td><td>unseen_mishearing</td><td>propose</td><td>correct_abstention</td><td>single_observation</td><td>single_observation</td><td class=t>Ask Eeshan to review the change.</td></tr>
+<tr class="ok"><td>A14-001</td><td>indic_script</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>मीरा शर्मा को भेज दो।</td></tr>
+<tr class="ok"><td>A14-002</td><td>indic_script</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>ध्वनि-सेवा फिर से गिर गई।</td></tr>
+<tr class="bad"><td>A14-003</td><td>indic_script</td><td>apply</td><td>reason_mismatch</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>मैंने Kivi service को restart किया।</td></tr>
+<tr class="ok"><td>A15-001</td><td>scope_carryover</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Ask Shreya Menon for the revised quote.</td></tr>
+<tr class="bad"><td>B1-001</td><td>common_word_sense</td><td>abstain</td><td>harmful_intervention</td><td>common_word_guard</td><td>exact_observed_variant</td><td class=t>I ate a Kivi for breakfast.</td></tr>
+<tr class="bad"><td>B1-002</td><td>common_word_sense</td><td>apply</td><td>harmful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>The Kivi fruit market in Bengaluru is seasonal.</td></tr>
+<tr class="bad"><td>B1-003</td><td>common_word_sense</td><td>abstain</td><td>harmful_intervention</td><td>guard_condition_met</td><td>exact_observed_variant</td><td class=t>Saaras desk is the one by the window.</td></tr>
+<tr class="bad"><td>B1-004</td><td>common_word_sense</td><td>abstain</td><td>harmful_intervention</td><td>guard_condition_met</td><td>exact_observed_variant</td><td class=t>Mayura reading was completely off that day.</td></tr>
+<tr class="bad"><td>B1-005</td><td>common_word_sense</td><td>abstain</td><td>harmful_intervention</td><td>guard_condition_met</td><td>exact_observed_variant</td><td class=t>Restart the Sarvam and check uptime.</td></tr>
+<tr class="ok"><td>B2-001</td><td>ambiguous_conflict</td><td>abstain</td><td>correct_abstention</td><td>ambiguous_conflict</td><td>ambiguous_conflict</td><td class=t>Ask Shreya to send the deck across.</td></tr>
+<tr class="ok"><td>B3-001</td><td>weak_evidence</td><td>propose</td><td>correct_abstention</td><td>below_activation_threshold</td><td>below_activation_threshold</td><td class=t>Push it to prawed after the review.</td></tr>
+<tr class="ok"><td>B4-001</td><td>scope_mismatch</td><td>abstain</td><td>correct_abstention</td><td>out_of_scope</td><td>out_of_scope</td><td class=t>I posted the trace in hash eng asr.</td></tr>
+<tr class="ok"><td>B5-001</td><td>already_canonical</td><td>abstain</td><td>correct_abstention</td><td>already_canonical</td><td>already_canonical</td><td class=t>The Kivi service is healthy.</td></tr>
+<tr class="ok"><td>B5-002</td><td>already_canonical</td><td>abstain</td><td>correct_abstention</td><td>already_canonical</td><td>already_canonical</td><td class=t>The MLOps rotation starts Monday.</td></tr>
+<tr class="ok"><td>B6-001</td><td>phonetic_stranger</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>Kevin is joining the standup today.</td></tr>
+<tr class="ok"><td>B6-002</td><td>phonetic_stranger</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>The bulb in the meeting room needs replacing.</td></tr>
+<tr class="ok"><td>B7-001</td><td>unknown_term</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>Tanvi Deshpande is joining the platform team.</td></tr>
+<tr class="ok"><td>B7-002</td><td>unknown_term</td><td>abstain</td><td>correct_abstention</td><td>single_observation</td><td>single_observation</td><td class=t>Ask Shreyas to look at the queue depth.</td></tr>
+<tr class="ok"><td>B8-001</td><td>suppressed_by_revert</td><td>abstain</td><td>correct_abstention</td><td>suppressed</td><td>suppressed</td><td class=t>Push it to prawed after the review.</td></tr>
+<tr class="ok"><td>B9-001</td><td>verbatim_region</td><td>abstain</td><td>correct_abstention</td><td>verbatim_region</td><td>verbatim_region</td><td class=t>The notice says &quot;the Bangalore office will relocate&quot;.</td></tr>
+<tr class="ok"><td>B9-002</td><td>verbatim_region</td><td>abstain</td><td>correct_abstention</td><td>verbatim_region</td><td>verbatim_region</td><td class=t>`const kiwi = fruits[0]`</td></tr>
+<tr class="ok"><td>B10-001</td><td>dormant_unsupported</td><td>abstain</td><td>correct_abstention</td><td>dormant_without_support</td><td>dormant_without_support</td><td class=t>Rukminy Iyer sent the invite.</td></tr>
+<tr class="ok"><td>B12-001</td><td>not_phonetic</td><td>abstain</td><td>correct_abstention</td><td>below_threshold</td><td>below_threshold</td><td class=t>The round was two crore at a ten x multiple.</td></tr>
+<tr class="ok"><td>B13-001</td><td>near_threshold</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>The salvage crew arrives tomorrow.</td></tr>
+<tr class="ok"><td>B14-001</td><td>wrong_referent</td><td>abstain</td><td>correct_abstention</td><td>below_threshold</td><td>below_threshold</td><td class=t>He did his PhD at I I T Delhi.</td></tr>
+<tr class="ok"><td>B14-002</td><td>wrong_referent</td><td>abstain</td><td>correct_abstention</td><td>ambiguous_conflict</td><td>ambiguous_conflict</td><td class=t>Shreya Nair from legal will review it.</td></tr>
+<tr class="ok"><td>B15-001</td><td>no_candidate</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>Can we move the sync to four o&#x27;clock tomorrow?</td></tr>
+<tr class="ok"><td>B15-002</td><td>no_candidate</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t>I went through the whole document last night, and the only thing I would change is the ord</td></tr>
+<tr class="bad"><td>B16-001</td><td>sound_alike_common_word</td><td>abstain</td><td>harmful_intervention</td><td>common_word_guard</td><td>phonetic_high_confidence</td><td class=t>The numbers WER set before the run.</td></tr>
+<tr class="bad"><td>B16-002</td><td>sound_alike_common_word</td><td>abstain</td><td>harmful_intervention</td><td>common_word_guard</td><td>phonetic_high_confidence</td><td class=t>The logs WER dropped during the deploy.</td></tr>
+<tr class="bad"><td>B17-001</td><td>sound_alike_common_phrase</td><td>abstain</td><td>reason_mismatch</td><td>common_word_guard</td><td>below_threshold</td><td class=t>The token is an opaque object.</td></tr>
+<tr class="ok"><td>B18-001</td><td>script_shift</td><td>abstain</td><td>correct_abstention</td><td>script_mismatch</td><td>script_mismatch</td><td class=t>आदित्य नारायणन को पीआर भेज दो।</td></tr>
+<tr class="ok"><td>B18-002</td><td>script_shift</td><td>abstain</td><td>correct_abstention</td><td>script_mismatch</td><td>script_mismatch</td><td class=t>Ask Meera Sharma to review it.</td></tr>
+<tr class="ok"><td>EDGE-001</td><td>no_candidate</td><td>abstain</td><td>correct_abstention</td><td>no_candidate</td><td>no_candidate</td><td class=t></td></tr>
+<tr class="ok"><td>EDGE-002</td><td>homophone_spelling</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>Aadith Narayanan has already looked at it.</td></tr>
+<tr class="bad"><td>GX-001</td><td>common_word_sense</td><td>abstain</td><td>harmful_intervention</td><td>guard_condition_met</td><td>exact_observed_variant</td><td class=t>I finished the Kivi smoothie before the standup.</td></tr>
+<tr class="bad"><td>MX-001</td><td>multi_token_span</td><td>apply</td><td>harmful_intervention</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>Aadith Narayanan is debugging Kivi while I finish the Kivi smoothie.</td></tr>
+<tr class="ok"><td>MX-002</td><td>multi_token_span</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>vaani-gateway calls vaani-gateway recursively on retry.</td></tr>
+<tr class="bad"><td>MX-003</td><td>multi_token_span</td><td>apply</td><td>reason_mismatch</td><td>context_supported</td><td>exact_observed_variant</td><td class=t>Kivi and Kivi again in the same paragraph.</td></tr>
+<tr class="ok"><td>MX-004</td><td>multi_token_span</td><td>apply</td><td>useful_intervention</td><td>exact_observed_variant</td><td>exact_observed_variant</td><td class=t>I spent most of yesterday afternoon reading through the retry logic in vaani-gateway, and </td></tr></table>

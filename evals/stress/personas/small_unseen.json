@@ -1,0 +1,615 @@
+{
+  "$comment": "Generated stress persona 'small_unseen' - 24 lexemes, guards=on. Reproducible from evals/stress/generate.py with seed 20260906.",
+  "persona": {
+    "name": "small_unseen",
+    "clock": "2026-01-15T09:00:00+00:00"
+  },
+  "lexemes": [
+    {
+      "id": "lex.small_unseen.0",
+      "canonical": "Madhusudan",
+      "kind": "person",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.1",
+      "canonical": "Tejaswini Ghoshal",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "tejashvini ghoshal",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.2",
+      "canonical": "Mysuru",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "misuru",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "myshuru",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.3",
+      "canonical": "Radhika Deshpande",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "raadhika deshpande",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.4",
+      "canonical": "Keerthana Padmanabhan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "keerthana padmanaban",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.5",
+      "canonical": "Raghunath Iyengar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "ragunath iyengar",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.6",
+      "canonical": "pnpm",
+      "kind": "code_symbol",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.7",
+      "canonical": "Madhusudan Krishnamurthy",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "madhusudan krishnamurty",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.8",
+      "canonical": "Vishakhapatnam",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "veeshakhapatnam",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "vishaakhapatnam",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.9",
+      "canonical": "vaani-gateway",
+      "kind": "code_symbol",
+      "variants": [
+        {
+          "form": "vaani-gatevay",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "vaani-gatewai",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.10",
+      "canonical": "ZDR",
+      "kind": "term",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.11",
+      "canonical": "Shreyaa Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "shreya bandyopadhyay",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "sreya bandyopadhyay",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.12",
+      "canonical": "BPE",
+      "kind": "term",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.13",
+      "canonical": "npm",
+      "kind": "code_symbol",
+      "variants": [],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "npm",
+            "support_tokens": [
+              "service",
+              "deploy"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.14",
+      "canonical": "Kanchipuram",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "kanchipooram",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.15",
+      "canonical": "Venkatesh",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "venkaates",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.16",
+      "canonical": "WER",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "ver",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "ver",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.17",
+      "canonical": "LoRA",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "loraa",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "loraa",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "lora",
+            "support_tokens": [
+              "service",
+              "deploy"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.18",
+      "canonical": "Anjali Bandyopadhyay",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "aanjali bandyopadhyay",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.20",
+      "canonical": "Lakshmi Nambiar",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "lakshmee nambiar",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "laksmi nambiar",
+          "provenance": "observed",
+          "count": 3
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 8.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.21",
+      "canonical": "shruti-index",
+      "kind": "code_symbol",
+      "variants": [
+        {
+          "form": "srooti-index",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.VSCode"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.22",
+      "canonical": "OTel",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "othel",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.23",
+      "canonical": "Puducherry",
+      "kind": "place",
+      "variants": [
+        {
+          "form": "pooducherri",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "puducherry",
+            "support_tokens": [
+              "service",
+              "deploy"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lex.small_unseen.24",
+      "canonical": "Indrajit",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "indrajith",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "indrajith",
+          "provenance": "observed",
+          "count": 4
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "a": "lex.small_unseen.3",
+      "b": "lex.small_unseen.15",
+      "rel": "cooccurs",
+      "weight": 0.7
+    },
+    {
+      "a": "lex.small_unseen.23",
+      "b": "lex.small_unseen.12",
+      "rel": "cooccurs",
+      "weight": 0.48
+    },
+    {
+      "a": "lex.small_unseen.18",
+      "b": "lex.small_unseen.9",
+      "rel": "cooccurs",
+      "weight": 0.59
+    },
+    {
+      "a": "lex.small_unseen.3",
+      "b": "lex.small_unseen.0",
+      "rel": "cooccurs",
+      "weight": 0.6
+    }
+  ]
+}
