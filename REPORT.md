@@ -31,9 +31,11 @@ disagrees with that command, the number here is wrong.
 4. [Why a dictionary is the wrong answer](#4-why-a-dictionary-is-the-wrong-answer)
 
 **Part II - vocabulary**
+
 5. [Every term, defined](#5-every-term-defined)
 
 **Part III - the machine**
+
 6. [The complete flowchart, input to output](#6-the-complete-flowchart-input-to-output)
 7. [One sentence, followed all the way through](#7-one-sentence-followed-all-the-way-through)
 8. [The four ideas the design rests on](#8-the-four-ideas-the-design-rests-on)
@@ -41,17 +43,20 @@ disagrees with that command, the number here is wrong.
 10. [How it learns](#10-how-it-learns)
 
 **Part IV - the code**
+
 11. [Every file, and what it does](#11-every-file-and-what-it-does)
 12. [Configuration and swapping parts](#12-configuration-and-swapping-parts)
 13. [The demonstration app](#13-the-demonstration-app)
 
 **Part V - the evidence**
+
 14. [The evaluation: three tiers and what each proves](#14-the-evaluation-three-tiers-and-what-each-proves)
 15. [The stress suite](#15-the-stress-suite)
 16. [The tests](#16-the-tests)
 17. [Every number, and what it means](#17-every-number-and-what-it-means)
 
 **Part VI - what went wrong**
+
 18. [Bugs found, and how each was found](#18-bugs-found-and-how-each-was-found)
 19. [Changes made to test cases, and why](#19-changes-made-to-test-cases-and-why)
 20. [What is not true yet](#20-what-is-not-true-yet)
