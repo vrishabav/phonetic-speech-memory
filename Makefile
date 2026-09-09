@@ -37,10 +37,10 @@ install: $(BIN)/python ## Create the venv and install dependencies
 check-wheels: ## Prove every dependency has a wheel on Python 3.11-3.14
 	@for v in 311 312 313 314; do \
 		printf "cp%s ... " $$v; \
-		$(BIN)/pip download -q -d /tmp/lmh-wheelcheck-$$v -r requirements.txt \
+		$(BIN)/pip download -q -d /tmp/psm-wheelcheck-$$v -r requirements.txt \
 			--only-binary=:all: --python-version $$v --implementation cp --abi cp$$v \
 			>/dev/null 2>&1 && echo "ok" || echo "FAILED - a dependency has no wheel for cp$$v"; \
-		rm -rf /tmp/lmh-wheelcheck-$$v; \
+		rm -rf /tmp/psm-wheelcheck-$$v; \
 	done
 
 migrate: ## Create and migrate the database
@@ -48,10 +48,10 @@ migrate: ## Create and migrate the database
 	$(BIN)/alembic upgrade head
 
 seed: migrate ## Load the reproducible seed persona
-	$(BIN)/python -m lmh.cli seed --from evals/data/persona_seed.json
+	$(BIN)/python -m psm.cli seed --from evals/data/persona_seed.json
 
 inspect: ## Print the current memory state
-	$(BIN)/python -m lmh.cli inspect
+	$(BIN)/python -m psm.cli inspect
 
 reset: ## Destroy all state and return to a freshly seeded system
 	rm -rf data
@@ -64,19 +64,19 @@ lint:
 	$(BIN)/ruff check src tests
 
 eval: ## Run the full evaluation offline (no API key required)
-	$(BIN)/python -m lmh.cli eval --replay --out evals/results --label baseline
+	$(BIN)/python -m psm.cli eval --out evals/results --label baseline
 
-eval-live: ## Run the evaluation against the live API (requires SARVAM_API_KEY)
-	$(BIN)/python -m lmh.cli eval --live --out evals/results --label live
+eval-live: ## Run the evaluation against the live model (requires SARVAM_API_KEY)
+	$(BIN)/python -m psm.cli eval --live --out evals/results --label live
 
 eval-generated: ## Run the ~1,800-case derived tier; reports where it fails, not whether
-	$(BIN)/python -m lmh.cli eval-generated
+	$(BIN)/python -m psm.cli eval-generated
 
 generate: ## Rebuild the generated tier from committed inputs (deterministic)
 	$(BIN)/python -m evals.gen.build
 
 explore: ## Build the case explorer - every case, its decision, and the memory behind it
-	$(BIN)/python -m lmh.cli explore
+	$(BIN)/python -m psm.cli explore
 
 stress: ## Run the stress suite (real prose, unseen personas, threshold sweeps)
 	$(BIN)/python evals/stress/run.py
@@ -84,15 +84,15 @@ stress: ## Run the stress suite (real prose, unseen personas, threshold sweeps)
 ablations: ## Reproduce every committed ablation
 	@P="suppression,verbatim,already_canonical,script_fit,scope_fit,exact_variant,phonetic,common_word_guard,cooccurrence,conflict,recency"; \
 	set -e; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-no-cooccurrence --policies "$${P/,cooccurrence/}"; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-no-conflict --policies "$${P/,conflict/}"; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-no-phonetic-scoring --policies "$${P/,phonetic,/,}"; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-no-guards --policies "$${P/,common_word_guard/}"; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-no-phonetics --phonetics phonetics.null; \
-	$(BIN)/python -m lmh.cli eval --out evals/results --label ablation-exact-only --policies "suppression,verbatim,already_canonical,exact_variant"
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-no-cooccurrence --policies "$${P/,cooccurrence/}"; \
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-no-conflict --policies "$${P/,conflict/}"; \
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-no-phonetic-scoring --policies "$${P/,phonetic,/,}"; \
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-no-guards --policies "$${P/,common_word_guard/}"; \
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-no-phonetics --phonetics phonetics.null; \
+	$(BIN)/python -m psm.cli eval --out evals/results --label ablation-exact-only --policies "suppression,verbatim,already_canonical,exact_variant"
 
 serve: ## Start the demo (PORT=8001 make serve if 8000 is taken)
 	@echo "  open http://127.0.0.1:$(PORT)"
-	$(BIN)/uvicorn lmh.api.app:app --port $(PORT)
+	$(BIN)/uvicorn psm.api.app:app --port $(PORT)
 
 .PHONY: help install check-wheels migrate seed inspect reset test lint eval eval-generated generate eval-live explore stress ablations serve

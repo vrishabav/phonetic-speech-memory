@@ -55,24 +55,24 @@
   "s5_scale": {
     "small_unseen": {
       "n": 24,
-      "build_ms": 0.54,
-      "p50_miss_ms": 0.122,
-      "p95_miss_ms": 0.322,
-      "p50_hit_ms": 0.071
+      "build_ms": 0.66,
+      "p50_miss_ms": 0.149,
+      "p95_miss_ms": 0.41,
+      "p50_hit_ms": 0.087
     },
     "medium_unguarded": {
       "n": 104,
-      "build_ms": 2.46,
-      "p50_miss_ms": 0.13,
-      "p95_miss_ms": 0.497,
-      "p50_hit_ms": 0.329
+      "build_ms": 2.97,
+      "p50_miss_ms": 0.147,
+      "p95_miss_ms": 0.569,
+      "p50_hit_ms": 0.379
     },
     "large_unguarded": {
       "n": 367,
-      "build_ms": 9.49,
-      "p50_miss_ms": 0.138,
-      "p95_miss_ms": 1.016,
-      "p50_hit_ms": 1.039
+      "build_ms": 11.59,
+      "p50_miss_ms": 0.174,
+      "p95_miss_ms": 1.337,
+      "p50_hit_ms": 1.177
     }
   },
   "s6_unseen_mishearings": {

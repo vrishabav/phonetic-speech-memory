@@ -13,7 +13,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from lmh.api import app as app_module
+from psm.api import app as app_module
 
 
 @pytest.fixture
@@ -21,8 +21,8 @@ def client(tmp_path, monkeypatch):
     # A fresh in-memory engine per test. The API keeps one process-wide engine
     # because it models one user's memory; the fixture resets that global so
     # tests cannot leak learned terms into one another.
-    monkeypatch.setenv("LMH_STORE", "store.memory")
-    monkeypatch.setenv("LMH_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
+    monkeypatch.setenv("PSM_STORE", "store.memory")
+    monkeypatch.setenv("PSM_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
     app_module._engine = None
     with TestClient(app_module.app) as c:
         yield c
@@ -205,7 +205,7 @@ def test_the_page_serves_and_is_self_contained(client):
     import re
 
     page = client.get("/").text
-    assert "language-memory-handler" in page
+    assert "phonetic-speech-memory" in page
 
     # No CDN, no build step: `make serve` has to work on a fresh clone with no
     # network, and a blocked script or stylesheet would fail silently in the

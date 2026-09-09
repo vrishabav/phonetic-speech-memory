@@ -1,4 +1,4 @@
-# language-memory-handler
+# phonetic-speech-memory
 
 Word-level phonetic memory for a dictation system. It learns the names, terms
 and spellings that belong to one person, and conditions the formatting stage so
@@ -16,85 +16,27 @@ verdict was, and why - including the calls where nothing happened.
 has already produced. That is why the evaluation can be deterministic, and why
 the system costs nothing on the majority of utterances.
 
+Every example runs against one persona: an engineer with colleagues, internal
+services and jargon of their own, working on a dictation product. The people are
+invented. The persona is a single committed JSON file, so you can read every
+term the system knows and swap the lot for your own.
+
 ---
 
 ## Run it
 
-Three commands. Python 3.11–3.14 and nothing else - no Docker, no Node, no API
-key, no network.
+Python 3.11-3.14 and nothing else: no Docker, no Node, no API key, no network.
 
 ```bash
 make install     # virtualenv + dependencies
 make seed        # create the database and load a 24-term persona
 make serve       # open http://127.0.0.1:8000
+make eval        # the evaluation, offline, about a second
 ```
 
-`make seed` is a convenience rather than a prerequisite: the server migrates and
-seeds the database itself on the first request. If port 8000 is taken on your
-machine, `PORT=8001 make serve` moves it; nothing else needs changing.
-
-**What to do once it is open**, in about two minutes:
-
-1. Press **Run** on what is already in the boxes - *"ask adith narayanan to
-   review the pull request"*, as a recogniser would have produced it. Watch
-   three lines appear: what the recogniser **produced**, what the formatter
-   **made of it**, and what **memory** did - with the change highlighted.
-   Underneath, every policy that had an opinion and the sentence it gave.
-2. Press the prepared example **"the same word, ordinary sense"**. It says
-   *"I ate a kiwi for breakfast"* and the system leaves it completely alone,
-   because `kiwi` is an ordinary English word here. That abstention is the
-   product.
-3. Press **"a Slack handle, in Slack"**, then **"the same handle, in Mail"**.
-   Same words, two answers.
-4. In **Teach it**, record one correction and watch the confidence and state of
-   that term move in the table below.
-5. Press **Reset to the seeded persona** and do it again.
-6. At the bottom, press **Open the case explorer here** - or the
-   *1,926 evaluation cases* link in the header. Eight examples are an
-   illustration; this is the evidence.
-
-The same thing, from the command line:
-
-```bash
-make eval             # 69 specification cases + 15 learning cases, ~1 second
-make eval-generated   # 1,842 derived cases, ~4 seconds, with the breakdown
-make explore          # builds evals/results/explorer.html - open it
-make test             # 150 tests
-```
-
-The explorer is the fastest way to judge this project, and it is served at
-`/explorer` so you do not have to go looking for the file. One self-contained
-page, two tabs: every hand-written case in full detail, and every derived case
-filterable by family, script, confusion rule and pass/fail. Set the filter to
-**failing only** - there are three, and they are all the same shape.
-
-### Why there is no microphone
-
-Recognition is upstream of this system and owned by the platform - in
-production, Saaras. The demo's input is therefore the recogniser's *output*:
-text, typed or loaded from a prepared case.
-
-An earlier version of this demo bundled a local recogniser so a reviewer could
-speak into the page, and it was the wrong trade. A small offline model is
-inaccurate in ways that have nothing to do with this project, and every one of
-those errors landed on the memory system: a mangled transcript made a correct
-abstention look like a bug, and the thing under evaluation quietly became the
-recogniser. Text in, text out, is also exactly the contract
-[the evaluation](#the-evidence) measures - so what you see in the browser and
-what the numbers describe are the same thing.
-
-### If something goes wrong
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| `no Python 3.11+ found` | `make` could not find a suitable interpreter | `make install PY=/path/to/python3` |
-| `the database has no schema` | a CLI command run before seeding - the server does this itself | `make seed` |
-| `Address already in use` | something else holds port 8000 | `PORT=8001 make serve` |
-| A banner at the top of the demo | the server said what went wrong; it is quoted verbatim | follow what it says |
-| A dependency builds from source and fails | very new or very old interpreter | `make check-wheels` says which |
-
-[`RUN.md`](RUN.md) is the same thing in the numbered form the brief asks for,
-with every environment variable and every output path.
+[`RUN.md`](RUN.md) is the review procedure in full: every environment variable,
+every command, what to click, where results are written, how to reset, and what
+to do when something goes wrong. Nothing about running this is repeated here.
 
 ---
 
@@ -108,8 +50,8 @@ with every environment variable and every output path.
 | **False interventions across 998 negative cases** | **0 (0.00%)** |
 | Corruptions across 4,000 sentences of real English prose, 367-term memory | **0 (0.00%)** |
 | Model calls in the entire evaluation | **0** |
-| Median latency | **0.62 ms** |
-| Tests | **150** |
+| Median latency | **0.67 ms** |
+| Tests | **157** |
 
 The engine is entirely deterministic. A language model sits behind a port and is
 used by the *formatting* stage; no decision about memory is delegated to one,
@@ -122,7 +64,7 @@ Three documents, and no more.
 | Document | What it is |
 |---|---|
 | [`RUN.md`](RUN.md) | How to run it, in the brief's numbered form. Start here. |
-| **[`REPORT.md`](REPORT.md)** | **The engineering report**: the product argument, the mechanism in full, the case taxonomy, the evaluation and what it does and does not establish, the decision log, eighteen bugs and how each was found, and everything that is still wrong |
+| **[`REPORT.md`](REPORT.md)** | **The engineering report**: the product argument, the mechanism in full, the case taxonomy, the evaluation and what it does and does not establish, the decision log, twenty bugs and how each was found, and everything that is still wrong |
 | This file | What the product is, how it is built, what the numbers say, and where it stops |
 
 If you read one thing, read `REPORT.md` §4 (why a dictionary is the wrong
@@ -174,7 +116,7 @@ ablation is a configuration list rather than a code branch - and why every
 number in the table below was produced without editing a line.
 
 ```
-src/lmh/
+src/psm/
   domain/      dataclasses and closed vocabularies. No I/O.
   ports/       Protocol definitions only. The swap surface.
   adapters/    phonetics, index, store, clock, llm, formatter
@@ -185,7 +127,7 @@ evals/         fixtures, generators, three runners, committed results, explorer
 ```
 
 Nothing in `engine/` imports an adapter - it receives one. Component selection
-happens in `src/lmh/config.py` by dotted path or registry alias, so replacing the
+happens in `src/psm/config.py` by dotted path or registry alias, so replacing the
 phonetic encoder, the store, the index, the language model, the formatter or the
 policy list is a configuration change rather than an edit. A
 test asserts that every configurable name resolves *and* that the engine honours
@@ -220,131 +162,22 @@ three; both are listed under names that say which is which.
 
 Reproduce any of them without touching code: `make ablations`.
 
-## Two tiers, and why they are different sizes
+**The two tiers are different kinds of object, and the sizes are deliberate.**
+The 69 hand-written cases are a *specification*: each one is a judgement about
+what the product should do, written before the engine existed, and a test caps
+post-hoc additions at 20% of the suite. The 1,842 derived cases are a
+*measurement*, built mechanically from committed inputs, and the property that
+makes them worth anything is that every expected outcome comes from the
+construction rather than from what the engine did - the alternative, recording
+the engine's replies as the expectation, is how a large benchmark comes to mean
+nothing. They are reported separately, always, because averaging them would let
+1,842 easy cases drown out 69 hard ones. `REPORT.md` §14 has both in full,
+including the twelve families and what each one varies.
 
-**69 hand-written cases, and 1,842 derived ones.** They are not the same kind of
-object and the sizes are deliberate.
-
-The hand-written tier is a **specification**. Each case encodes a judgement
-about what the product should do, was written before the engine existed (a test
-enforces that), and is worth arguing about on its own. Writing three thousand of
-those would not produce three thousand judgements - it would produce three
-thousand copies of a dozen, and the number would mean nothing. Exactly one case
-was added after the engine existed, and it is flagged as such.
-
-The derived tier is a **measurement**. Every case is built mechanically from
-committed inputs by `evals/gen/build.py`, and the property that makes it worth
-anything is that **its expected outcome comes from the construction, not from
-what the engine did**. A case that says *"take the canonical `Vaishnavi
-Kulkarni`, apply the documented v→w confusion to get `waishnavi Kulkarni`, put
-it in a carrier sentence in the app this term is actually bound to"* knows the
-right answer before the engine is built. Generating inputs and recording the
-engine's replies as the expectation would produce a suite that can never fail,
-which is the usual way a large benchmark comes to mean nothing.
-
-Twelve families, four personas - three with no hand-written guards at all, and
-none of them the one the thresholds were tuned on - ten scripts:
-
-```
-                        n     pass   useful  missed  harmful
-unseen_mishearing     306    99.0%      303       3        0
-already_canonical     144   100.0%        0       0        0
-indic_known_variant    84   100.0%       84       0        0
-indic_unseen          115   100.0%      115       0        0
-known_variant         305   100.0%      305       0        0
-ordinary_prose        500   100.0%        0       0        0
-ordinary_word_sense    60   100.0%        0       0        0
-scope_carryover        66   100.0%       66       0        0
-scope_mismatch          3   100.0%        0       0        0
-script_shift           40   100.0%        0       0        0
-unknown_name          120   100.0%        0       0        0
-verbatim_region        99   100.0%        0       0        0
-```
-
-The three remaining failures are all the same shape: a term with a single weak
-observation is `PROPOSE`d rather than applied. That is the threshold doing what
-it is for, and it is left visible rather than tuned away.
-
-**The tier paid for itself twice on its first run**, and neither finding was
-reachable from 69 cases:
-
-- Slicing by confusion rule showed `sh→s` passing 100% while `s→sh` passed 48%,
-  and `ph` names failing across seven scripts at once. Both were holes in the
-  romanisation fold: nothing collapsed `p`/`ph`/`f`, and `y→i` only fired after
-  a consonant - which is not where `y` sits in *Iyer*, *Iyengar* or
-  *Yashodhara*. Fixing them moved the derived tier from 92.8% to 99.5%.
-- Slicing by script showed every remaining Indic failure was one letter: ब/व.
-  That confusion was modelled as a Bengali peculiarity; it is universal. It also
-  exposed that alternate readings were all-or-nothing, so a word with two
-  ambiguous letters (*वैष्णवी*, *వెంకటేశ్వర్లు*) could never match its own
-  mishearing. Readings are now emitted per combination, capped.
-
-It also found two bugs in **itself**, which is worth saying plainly: the first
-run reported eleven harmful interventions that were entirely the generator's
-fault - it assigned applications round-robin and demanded that app-bound terms
-be corrected in the wrong app. The engine was right and the fixture was wrong.
-The fix turned that mistake into a real family. A generated expectation is only
-worth something if the generator models the same rules the system does.
-
-That cuts both ways, and the third finding is the one worth reading. A year's
-worth of generated agreement is worth nothing if the generator inherited the
-system's mistake: 69 of those cases asserted that an app-bound term must never be
-corrected in another application, which is right for a Slack channel and wrong
-for a person's name. Nothing automated could have found it, because the fixture
-and the engine held the same wrong belief. Somebody using the demo found it in a
-sentence. The rule, the argument and the two families it split into are in
-[`REPORT.md`](REPORT.md) §8.4.
-
-Separately, `make stress` measures what a hand-written case list cannot:
-
-```
-corruptions on 4,000 sentences of real English prose      0  (0.00%)
-mishearings never seen before, fixed automatically     87.2%
-mishearings never seen before, corrupted                2.1%
-false fires on three unseen personas (24/104/367 terms)   0  (0.00%)
-throughput                                            2,547 sentences/sec
-```
-
-Two classes in the taxonomy - `sound_alike_common_word` and
-`sound_alike_common_phrase` - exist **because** of that suite. Running a
-367-term memory over real prose found that a memory for the acronym `WER` was
-rewriting the word *"were"*, and that `Ishaan` was rewriting the phrase *"is
-an"* - between them, every false positive the system had. No amount of thinking
-up cases produced either one.
-
-## Indian languages
-
-Memory works in native Indic script, not only in romanisation. Nine
-ISCII-aligned Unicode blocks - Devanagari, Bengali, Gurmukhi, Gujarati, Odia,
-Tamil, Telugu, Kannada, Malayalam - are transliterated to a Latin phonetic form
-and then go through exactly the same fold, blocking index and policy stack as
-English. There is no separate Indic pipeline to keep in sync.
-
-All nine are measured, not asserted. 199 derived cases run against a
-native-script persona of 42 real names, with mishearings produced by confusion
-rules expressed as *offsets from a block base* - the same ISCII alignment the
-encoder is built on, so one rule ("an aspirated consonant is heard as its plain
-counterpart") applies in every script at once:
-
-| | | | |
-|---|---|---|---|
-| मीरा शर्मा → मिरा शर्मा | vowel length | ਹਰਪ੍ਰੀਤ ਸਿੰਘ → ਹਰਫ੍ਰੀਤ ਸਿੰਘ | p/ph |
-| সুদীপ্ত মুখার্জি → সুধীপ্ত মুখার্জি | aspiration | ପଣ୍ଡା → ଫଣ୍ଡା | p/ph |
-| વૈષ્ણવી → બૈષ્ણવી | b/v merger | வெங்கடேசன் → வெங்கதேசன் | retroflex/dental |
-| వెంకటేశ్వర్లు → బెంకటేశ్వర్లు | b/v merger | ಶ್ವೇತಾ → ಸ್ವೇತಾ | sibilant |
-
-Where a script does not have a distinction, the rule simply does not fire:
-Tamil has no aspirate series, so its cases exercise vowel length and sibilants
-instead. The generator refuses to emit an unassigned code point, which it did
-until that was caught - producing "letters" no font renders and no person could
-have typed.
-
-Cross-script *retrieval* is allowed (Devanagari text can match a Latin-canonical
-memory) but cross-script *rewriting* is vetoed (`ScriptFitPolicy`, reason
-`SCRIPT_MISMATCH`): correcting someone's spelling is the job, silently changing
-the alphabet they chose to write in is not. Alternate readings are capped at
-three ambiguous letters per word - beyond that the blocking bucket grows faster
-than the recall it buys.
+`make stress` measures what a case list structurally cannot: 4,000 sentences of
+real English prose the author did not write, three personas the thresholds were
+never tuned on, threshold sweeps, messy input, and 94 held-out mishearings. Two
+taxonomy classes exist only because it found them.
 
 ## Decisions
 
@@ -384,41 +217,32 @@ bugs.
 - **One canonical form per lexeme.** If the user writes a name in Devanagari and
   memory holds it in Latin, the system declines rather than converting. A
   per-script canonical is a schema change, not an architecture one.
-- **No speaker diarisation, no multi-speaker context.** Kivi is single-user
-  dictation and the design assumes it.
+- **No speaker diarisation, no multi-speaker context.** The design assumes
+  single-user dictation.
 - **Scripts outside the nine Indic blocks** - Arabic (Urdu), Ol Chiki, Meetei
   Mayek - are not handled. The encoder abstains rather than guessing.
 - **Numeric and unit formatting** (*"two crore"* → *"₹2 Cr"*) is classified only
   so the system can refuse it. That is the formatter's job, not memory's.
-- **The API is a single-process, single-user surface.** That is the honest model
+- **The API is a single-process, single-user surface.** That is the right model
   for personal memory; adding locking would imply a concurrency story the design
   does not have.
-- **The live model path is implemented but lightly exercised.** `make eval` and
-  every committed number are offline; `SarvamModel` and the cassette recorder
-  exist and are tested for construction and replay, not against a long live run.
+- **The live model path has never met a real model.** Every committed number is
+  offline. The whole chain is driven end to end by `tests/test_live_path.py`
+  against a stub OpenAI-compatible endpoint on localhost, so the request, the
+  memory-conditioned prompt, the verifier and the failure paths are all covered
+  - but whether a real model writes good prose, and how often it overreaches,
+  are unmeasured.
 - **A binding is a two-way classification, and the real signal is richer.** Out
   of scope vetoes for app-native terms (a channel, a service identifier) and is
   merely neutral for everything else. How *many* applications a term has been
   corrected in, and whether the user ever said where it belongs, are better
   evidence and are not used. `REPORT.md` §8.4.
-- **Ten of ninety-four held-out mishearings are missed and two are corrupted.**
-  Widening the fold trades the first against the second. The trade is positioned,
-  not solved.
+- **Ten of ninety-four held-out mishearings are missed and two do not come out
+  exactly canonical.** Widening the fold trades the first against the second.
+  The trade is positioned, not solved. `REPORT.md` §20.
 - **Recognition is upstream and not measured.** The mishearings in the
   evaluation are generated from documented confusion rules, not harvested from a
   recogniser. The rules are defensible; the distribution is a model.
-
-## Configuration and secrets
-
-No environment variable is required to run anything here - the demo, the
-evaluation and the tests all default to offline components.
-
-To run against the live Sarvam model, copy `.env.example` to `.env` and set
-`SARVAM_API_KEY`. **`.env` is gitignored and must never be committed**;
-`.env.example` documents every variable with empty values. `.env` is read
-automatically at startup when present, and the key is never logged, never
-written to a cassette, and never included in an evaluation result. No credential
-appears anywhere in this repository.
 
 ## AI use
 
@@ -431,12 +255,12 @@ pressure-test them and to write. Specific uses are recorded in
 
 Two research notes, for completeness:
 
-- **Client inspection.** The publicly downloadable Kivi Windows installer was
-  unpacked and its bundled application resources were read, to check what the
-  shipping product's dictionary and correction behaviour actually looks like
-  before designing against assumptions. No account was used, no service was
-  called, nothing was modified or redistributed, and no code from it appears
-  here. It informed the taxonomy - chiefly the observation that scope binding is
+- **Client inspection.** A shipping dictation client was unpacked from its
+  public installer and its bundled application resources read, to see what a
+  real product's dictionary and correction behaviour looks like before
+  designing against assumptions. No account was used, no service was called,
+  nothing was modified or redistributed, and no code from it appears here. It
+  informed the taxonomy - chiefly the observation that scope binding is
   per-application - and nothing else.
 - **The stress corpus is synthetic-but-real.** The 4,000 neutral sentences are
   harvested from Python standard-library docstrings, not generated by a model,
@@ -449,9 +273,8 @@ Two research notes, for completeness:
 
 **None. All rights reserved.**
 
-This repository is a submission for the Sarvam AI "The Words Kivi Keeps"
-assignment. It is provided for evaluation by the recipient only. No permission
-is granted to copy, modify, redistribute, or use this code or its evaluation
-data for any other purpose.
+This repository was written as a take-home submission and is published for
+reading. No permission is granted to copy, modify, redistribute, or use this
+code or its evaluation data for any other purpose.
 
 Third-party dependencies keep their own licences and are not vendored here.

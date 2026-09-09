@@ -36,13 +36,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from lmh.adapters.clock.frozen import FrozenClock  # noqa: E402
-from lmh.adapters.store.sqlite import serialise_resolutions  # noqa: E402
-from lmh.config import Settings  # noqa: E402
-from lmh.domain.enums import LexemeState  # noqa: E402
-from lmh.domain.models import Utterance  # noqa: E402
-from lmh.engine.engine import Engine  # noqa: E402
-from lmh.seed import load_persona  # noqa: E402
+from psm.adapters.clock.frozen import FrozenClock  # noqa: E402
+from psm.adapters.store.sqlite import serialise_resolutions  # noqa: E402
+from psm.config import Settings  # noqa: E402
+from psm.domain.enums import LexemeState  # noqa: E402
+from psm.domain.models import Utterance  # noqa: E402
+from psm.engine.engine import Engine  # noqa: E402
+from psm.seed import load_persona  # noqa: E402
 
 DATA = ROOT / "evals" / "data"
 DEFAULT_CLOCK = "2026-01-15T09:00:00+00:00"
@@ -112,8 +112,8 @@ def apply_overrides(lexemes, overrides: dict):
         if "last_used" in patch:
             fields["last_used"] = datetime.fromisoformat(patch["last_used"])
         if "guards" in patch:
-            from lmh.domain.enums import GuardKind
-            from lmh.domain.models import Guard
+            from psm.domain.enums import GuardKind
+            from psm.domain.models import Guard
 
             fields["guards"] = tuple(
                 Guard(kind=GuardKind(g["kind"]), payload=g.get("payload", {}))
@@ -154,8 +154,8 @@ def pick_reason(adjudication) -> str:
     retrieval and a policy pass", which is exactly the distinction the latency
     and cost numbers turn on.
     """
-    from lmh.domain.enums import PolicySignal
-    from lmh.engine.adjudicator import APPLY_REASON_PRECEDENCE
+    from psm.domain.enums import PolicySignal
+    from psm.engine.adjudicator import APPLY_REASON_PRECEDENCE
 
     applied = adjudication.applied
     if applied:
@@ -362,7 +362,7 @@ def render_report(summary: dict, results: list[CaseResult]) -> str:
         for r in results
     )
     t = summary["totals"]
-    return f"""<!doctype html><meta charset=utf-8><title>LMH evaluation</title>
+    return f"""<!doctype html><meta charset=utf-8><title>PSM evaluation</title>
 <style>
 body{{font:14px/1.5 ui-sans-serif,system-ui,sans-serif;margin:2rem auto;max-width:1100px;color:#16161d}}
 h1{{font-size:1.4rem;margin:0 0 .2rem}} .sub{{color:#666;margin:0 0 1.5rem}}
@@ -373,7 +373,7 @@ tr.bad td{{background:#fff4f2}} tr.ok td:first-child{{color:#137a5a}}
 td.t{{font-family:ui-monospace,monospace;font-size:11.5px;color:#444}}
 pre{{background:#f6f6f8;padding:1rem;border-radius:6px;overflow:auto;font-size:12px}}
 </style>
-<h1>language-memory-handler - evaluation</h1>
+<h1>phonetic-speech-memory - evaluation</h1>
 <p class=sub>{t['passed']}/{t['cases']} passed ({t['pass_rate']:.0%}) &middot;
 generated {summary['generated_at']}</p>
 <pre>{escape(json.dumps({k: summary[k] for k in
@@ -383,11 +383,51 @@ generated {summary['generated_at']}</p>
 {rows}</table>"""
 
 
+def _preflight(settings: Settings, parser) -> None:
+    """Prove the configured formatter can reach its model before writing a
+    result file with that model's name on it.
+
+    The formatter degrades to the unconditioned text when the model is
+    unreachable, which is correct for dictation and ruinous for an evaluation:
+    a replay run against an empty cassette directory produced exactly the
+    offline numbers, under the label `replay`. One probe call up front turns
+    that into an error the reviewer can act on.
+    """
+    try:
+        engine = Engine.build(settings)
+    except Exception as exc:  # missing credentials, unknown alias, bad URL
+        parser.error(f"{settings.llm} could not be constructed. {exc}")
+    formatter = engine.formatter
+    formatter.format(
+        Utterance(
+            asr_text="the sarvam kiwi service is dropping requests",
+            formatted_text="",
+            app="com.tinyspeck.slackmacgap",
+        ),
+        lexemes=(),
+        instructions=(),
+    )
+    if getattr(formatter, "failures", 0):
+        parser.error(
+            f"the {settings.formatter} formatter could not reach {settings.llm}: "
+            f"{getattr(formatter, 'last_error', 'unknown error')}. "
+            "Nothing was written. Run `make eval` for the offline evaluation."
+        )
+
+
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog="lmh-eval")
+    parser = argparse.ArgumentParser(prog="psm-eval")
     parser.add_argument("--out", default="evals/results")
-    parser.add_argument("--replay", action="store_true", default=True)
-    parser.add_argument("--live", action="store_true")
+    parser.add_argument(
+        "--live",
+        action="store_true",
+        help="run the memory-conditioned formatter against a real model endpoint",
+    )
+    parser.add_argument(
+        "--replay",
+        action="store_true",
+        help="same path as --live, answered from recorded cassettes",
+    )
     parser.add_argument("--policies", help="comma-separated ablation")
     parser.add_argument("--phonetics", help="e.g. phonetics.null")
     parser.add_argument("--label", default="")
@@ -401,6 +441,21 @@ def main(argv=None) -> int:
         settings = settings.with_(policies=tuple(p.strip() for p in args.policies.split(",")))
     if args.phonetics:
         settings = settings.with_(phonetics=args.phonetics)
+
+    # These two flags used to be declared and then ignored, which is the worst
+    # possible bug in an evaluation harness: `make eval-live` ran the offline
+    # stub, reported "0 model calls", and wrote a result file labelled `live`.
+    # A number that names a component which never ran is a false claim in every
+    # artefact it appears in, so the switch is now real and it fails loudly.
+    if args.live and args.replay:
+        parser.error("--live and --replay are alternatives; pass one or neither")
+    if args.live:
+        settings = settings.with_(llm="llm.sarvam", formatter="formatter.llm")
+    elif args.replay:
+        settings = settings.with_(llm="llm.cassette", formatter="formatter.llm")
+
+    if args.live or args.replay:
+        _preflight(settings, parser)
 
     cases = load_jsonl(DATA / "tier_c_application.jsonl")
     results = run_application_cases(cases, settings)

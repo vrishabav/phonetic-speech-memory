@@ -10,7 +10,7 @@ Output is a single HTML file with no external dependencies - no CDN, no fonts,
 no network. It opens from the filesystem, works offline, and is small enough to
 commit.
 
-    python -m lmh.cli explore            # build and report the path
+    python -m psm.cli explore            # build and report the path
     make explore                         # same
 """
 
@@ -329,7 +329,7 @@ def build(results_dir: Path, cases_file: Path, out: Path) -> Path:
 
 
 _PAGE = """<!doctype html><meta charset=utf-8>
-<title>language-memory-handler - every case</title>
+<title>phonetic-speech-memory - every case</title>
 <style>
 :root{{--ink:#16161d;--muted:#6b6b76;--rule:#e3e3e8;--paper:#fbfbfc;--card:#fff;
 --good:#136c4f;--goodbg:#e7f4ef;--bad:#a3271c;--badbg:#fcecea;--warn:#8a5a06;--warnbg:#fdf3e2;
@@ -423,7 +423,7 @@ td{{border-bottom-color:#232330}} mark{{background:#5c4a12;color:#f6e5b0}}
 }}
 </style>
 <header>
-  <h1>language-memory-handler - every evaluation case</h1>
+  <h1>phonetic-speech-memory - every evaluation case</h1>
   <p class=sub>Each case shows its inputs, the expected result, the actual result, the memory
      state at the moment it decided, and every policy's opinion. Generated {generated}.</p>
   <div class=stats>

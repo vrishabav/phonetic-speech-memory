@@ -14,21 +14,21 @@ from pathlib import Path
 
 import pytest
 
-from lmh.adapters.clock.frozen import FrozenClock
-from lmh.adapters.phonetics.dmetaphone import PhoneticStack, normalise
-from lmh.adapters.store.memory import InMemoryStore
-from lmh.config import EvidenceWeights, Settings, Thresholds
-from lmh.domain.enums import (
+from psm.adapters.clock.frozen import FrozenClock
+from psm.adapters.phonetics.dmetaphone import PhoneticStack, normalise
+from psm.adapters.store.memory import InMemoryStore
+from psm.config import EvidenceWeights, Settings, Thresholds
+from psm.domain.enums import (
     LexemeState,
     ObservationSource,
     Verdict,
 )
-from lmh.domain.models import Confidence, Utterance
-from lmh.engine.engine import Engine
-from lmh.engine.learner import Learner, observation
-from lmh.engine.projector import Projector, decay
-from lmh.engine.text import in_protected_region, ngram_spans, splice, window_tokens
-from lmh.seed import load_persona
+from psm.domain.models import Confidence, Utterance
+from psm.engine.engine import Engine
+from psm.engine.learner import Learner, observation
+from psm.engine.projector import Projector, decay
+from psm.engine.text import in_protected_region, ngram_spans, splice, window_tokens
+from psm.seed import load_persona
 
 ROOT = Path(__file__).resolve().parents[1]
 PERSONA = ROOT / "evals" / "data" / "persona_seed.json"
@@ -222,7 +222,7 @@ def test_ordinary_text_costs_nothing_and_is_left_alone(engine):
     Note this does NOT assert the gate stayed shut. Once memory contains a
     three-letter acronym like WER, the gate opens on plenty of ordinary
     sentences - "we" blocks against it - and that is an unavoidable cost of
-    remembering short acronyms at all. The guarantee that survives is the one
+    rememkivvyng short acronyms at all. The guarantee that survives is the one
     worth having: nothing changes, nothing is spent.
     """
     text = "Can we move the sync to four o'clock tomorrow?"
@@ -294,7 +294,7 @@ def test_removing_a_policy_is_a_config_change():
 
 
 def test_an_unknown_policy_name_is_an_error_not_a_silent_omission():
-    from lmh.engine.policies import build_stack
+    from psm.engine.policies import build_stack
 
     with pytest.raises(ValueError, match="unknown policy"):
         build_stack(["suppression", "nonsense"])
@@ -323,9 +323,9 @@ def test_verdicts_are_three_valued(engine):
 
 
 def _seeded_engine():
-    from lmh.config import Settings
-    from lmh.engine.engine import Engine
-    from lmh.seed import load_persona
+    from psm.config import Settings
+    from psm.engine.engine import Engine
+    from psm.seed import load_persona
 
     engine = Engine.build(Settings(store="store.memory"))
     lexemes, edges = load_persona("evals/data/persona_seed.json", now=engine.now())
@@ -338,8 +338,8 @@ def _find(engine, canonical):
 
 
 def test_supporting_evidence_never_lowers_confidence():
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     before = _find(engine, "Shreyaa Bhattacharya")
@@ -360,8 +360,8 @@ def test_supporting_evidence_never_lowers_confidence():
 def test_contradicting_evidence_still_lowers_confidence():
     """The other direction has to keep working, or the fix above is just a
     ratchet that makes memory unfalsifiable."""
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     before = _find(engine, "Shreyaa Bhattacharya")
@@ -379,8 +379,8 @@ def test_contradicting_evidence_still_lowers_confidence():
 
 def test_a_term_with_no_prior_starts_from_uniform():
     """A genuinely new term must not inherit anybody's confidence."""
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     engine.observe(
@@ -401,7 +401,7 @@ def test_the_projection_is_stable_under_repeated_refresh():
     (prior, log, now) and `now` is genuinely one of the inputs - priors decay.
     Freezing it is what makes "stable" a testable claim rather than a
     tolerance."""
-    from lmh.adapters.clock.frozen import FrozenClock
+    from psm.adapters.clock.frozen import FrozenClock
 
     engine = _seeded_engine()
     engine.clock = FrozenClock("2026-01-15T09:00:00+00:00")
@@ -419,9 +419,9 @@ def test_sqlite_round_trip_preserves_the_prior(tmp_path):
     from alembic import command
     from alembic.config import Config
 
-    from lmh.adapters.store.sqlite import SqliteStore
-    from lmh.domain.models import Confidence
-    from lmh.seed import load_persona
+    from psm.adapters.store.sqlite import SqliteStore
+    from psm.domain.models import Confidence
+    from psm.seed import load_persona
 
     # Built by the real migrations, not by a convenience helper: this doubles as
     # the test that `make migrate` produces a schema the code can actually use.
@@ -453,7 +453,7 @@ def test_sqlite_round_trip_preserves_the_prior(tmp_path):
 
 
 def test_an_instruction_names_its_own_term():
-    from lmh.engine.learner import Learner
+    from psm.engine.learner import Learner
 
     extract = Learner.term_from_instruction
     assert extract("always write it Aadith with two a's") == "Aadith"
@@ -473,8 +473,8 @@ def test_an_instruction_is_stored_verbatim_not_compiled():
     """A8 is the class the architecture is shaped around. The instruction has to
     survive as the user's words, because it is a rule about how to write rather
     than a string to substitute."""
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     engine.observe(
@@ -489,8 +489,8 @@ def test_an_instruction_is_stored_verbatim_not_compiled():
 
 
 def test_a_rename_tombstones_the_old_form_and_keeps_it_resolving():
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     engine.observe(
@@ -513,8 +513,8 @@ def test_a_rename_tombstones_the_old_form_and_keeps_it_resolving():
 
 
 def test_a_deletion_tombstones_rather_than_dropping():
-    from lmh.domain.enums import ObservationSource
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     engine.observe(
@@ -534,9 +534,9 @@ def test_a_deletion_tombstones_rather_than_dropping():
 def test_two_reverts_in_one_scope_create_a_suppression_guard():
     """Derived from the log by the projector, not written by the learner - so
     replaying the log reproduces the guard and truncating it removes the guard."""
-    from lmh.domain.enums import ObservationSource
-    from lmh.domain.models import Binding, BindingScope
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.domain.models import Binding, BindingScope
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     binding = Binding(BindingScope.APP, "com.tinyspeck.slackmacgap")
@@ -557,9 +557,9 @@ def test_two_reverts_in_one_scope_create_a_suppression_guard():
 
 
 def test_one_revert_is_not_enough_to_suppress():
-    from lmh.domain.enums import ObservationSource
-    from lmh.domain.models import Binding, BindingScope
-    from lmh.engine.learner import observation
+    from psm.domain.enums import ObservationSource
+    from psm.domain.models import Binding, BindingScope
+    from psm.engine.learner import observation
 
     engine = _seeded_engine()
     engine.observe(
@@ -582,9 +582,9 @@ def test_an_old_prior_decays_toward_no_opinion_not_toward_wrong():
     frozen, because its evidence had no date to grow old from."""
     from datetime import UTC, datetime, timedelta
 
-    from lmh.config import Thresholds
-    from lmh.domain.models import Confidence
-    from lmh.engine.projector import Projector
+    from psm.config import Thresholds
+    from psm.domain.models import Confidence
+    from psm.engine.projector import Projector
 
     projector = Projector(Thresholds(), _weights())
     prior = Confidence(alpha=5.0, beta=1.0)      # mean 0.83, strength 4
@@ -600,6 +600,6 @@ def test_an_old_prior_decays_toward_no_opinion_not_toward_wrong():
 
 
 def _weights():
-    from lmh.config import EvidenceWeights
+    from psm.config import EvidenceWeights
 
     return EvidenceWeights()

@@ -6,7 +6,10 @@
 !.env.example
 
 # --- scratch --------------------------------------------------------------- #
-# Patch files and editor leftovers are never part of the repository.
+# Transfer and setup artefacts, editor leftovers, archives. None of these are
+# part of the submission; they exist only to move the tree onto a machine.
+finalise.sh
+*.tar.gz
 *.patch
 *.orig
 *.rej

@@ -29,11 +29,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from lmh.adapters.clock.frozen import FrozenClock  # noqa: E402
-from lmh.config import Settings, Thresholds  # noqa: E402
-from lmh.domain.models import Utterance  # noqa: E402
-from lmh.engine.engine import Engine  # noqa: E402
-from lmh.seed import load_persona  # noqa: E402
+from psm.adapters.clock.frozen import FrozenClock  # noqa: E402
+from psm.config import Settings, Thresholds  # noqa: E402
+from psm.domain.models import Utterance  # noqa: E402
+from psm.engine.engine import Engine  # noqa: E402
+from psm.seed import load_persona  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
 CLOCK = "2026-01-15T09:00:00+00:00"
@@ -296,9 +296,16 @@ def s6_unseen_mishearings() -> dict:
 
     Three outcomes are counted separately, because they have very different
     costs:
-      fixed       - correct canonical form produced
+      fixed       - the canonical form appears in the output
       missed      - left unchanged (annoying, harmless)
-      wrong       - changed to a DIFFERENT term (actively damaging)
+      wrong       - changed to something that is not the canonical form
+
+    `wrong` is deliberately strict: it catches a real substitution, but it also
+    catches a half-correction (one token of a name fixed, the other left) and a
+    correct replacement that sentence-initial capitalisation then changed. Both
+    of the current two are of that second kind, and both are still counted here
+    rather than excused, because the alternative is a check that reports success
+    for output the user would have to edit.
     """
     rule("S6  Held-out mishearings: can it fix forms it has never seen?")
     cases = [json.loads(line) for line in

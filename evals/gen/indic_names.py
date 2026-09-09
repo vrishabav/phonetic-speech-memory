@@ -6,6 +6,16 @@ Two things live here, and the second is the interesting one.
 Latin. A generator that romanised and then back-transliterated would be testing
 the transliterator, and would produce spellings no person actually writes.
 
+There are 42 of them, four to eight per script, and they are chosen rather than
+sampled: each script's set is picked to contain the features that script's own
+rules can act on - aspirate pairs, retroflex/dental contrasts, long vowels,
+conjuncts, and the b/v letters where the script has both. A random sample of
+Indian names would leave several rules with nothing to fire on and would make
+the per-script breakdown meaningless. The selection is therefore a stated bias
+towards *coverage of the confusion rules*, not towards frequency; what it buys
+is that every rule below is exercised in every script that can express it, and
+what it costs is that these numbers say nothing about how common each name is.
+
 **The rules are expressed as offsets from a block base, not as characters.**
 The nine Unicode blocks this system supports are ISCII-aligned: the same
 consonant sits at the same offset in Devanagari (0x0900), Bengali (0x0980),
@@ -16,7 +26,7 @@ script at once. That is the same observation the *encoder* is built on
 the generator and the system under test share a premise, and if the premise is
 wrong both are wrong together and the tests say so.
 
-Scripts differ in what they contain, and the rules degrade honestly: Tamil has
+Scripts differ in what they contain, and the rules degrade accordingly: Tamil has
 no aspirate series at all, so aspirate rules simply do not fire on Tamil names
 and that script's cases exercise vowel length and sibilants instead. That is a
 property of Tamil, not a gap in the generator.

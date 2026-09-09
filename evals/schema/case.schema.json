@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/language-memory-handler/schema/case.schema.json",
-  "title": "LMH evaluation case",
+  "$id": "https://github.com/phonetic-speech-memory/schema/case.schema.json",
+  "title": "PSM evaluation case",
   "description": "One case in the Tier C adversarial suite. Two shapes: an APPLICATION case asserts what happens to a piece of text given a memory state; a LEARNING case asserts how memory changes given a piece of evidence. Both are validated by tests/test_fixture_integrity.py, which runs before the engine does.",
   "type": "object",
   "required": ["case_id", "kind", "class", "tier", "rationale"],

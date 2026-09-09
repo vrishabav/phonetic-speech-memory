@@ -16,15 +16,15 @@ from pathlib import Path
 
 import pytest
 
-from lmh.adapters.clock.frozen import FrozenClock
-from lmh.adapters.phonetics.dmetaphone import DoubleMetaphoneEncoder, PhoneticStack
-from lmh.adapters.phonetics.indic import fold
-from lmh.config import Settings
-from lmh.domain.enums import GuardKind
-from lmh.domain.models import Utterance
-from lmh.engine.engine import Engine
-from lmh.engine.guards import is_common, looks_like_short_acronym
-from lmh.seed import load_persona
+from psm.adapters.clock.frozen import FrozenClock
+from psm.adapters.phonetics.dmetaphone import DoubleMetaphoneEncoder, PhoneticStack
+from psm.adapters.phonetics.indic import fold
+from psm.config import Settings
+from psm.domain.enums import GuardKind
+from psm.domain.models import Utterance
+from psm.engine.engine import Engine
+from psm.engine.guards import is_common, looks_like_short_acronym
+from psm.seed import load_persona
 
 ROOT = Path(__file__).resolve().parents[1]
 STRESS = ROOT / "evals" / "stress"
@@ -259,7 +259,7 @@ def test_the_gate_still_costs_nothing_at_scale(large):
         ("ठीक है", "theek hai", "Devanagari"),
         ("आदित्य", "Aaditya", "Devanagari"),
         ("बेंगलुरु", "Bengaluru", "Devanagari"),
-        ("সর্বম", "Sarvam", "Bengali"),
+        ("অনন্যা", "Ananya", "Bengali"),
         ("విశ్వనాథన్", "Vishwanathan", "Telugu"),
         ("ವಿಶ್ವನಾಥನ್", "Vishwanathan", "Kannada"),
         ("விஸ்வநாதன்", "Vishwanathan", "Tamil"),
@@ -291,7 +291,7 @@ def test_different_names_stay_apart_across_scripts(a, b):
 def test_indic_combining_marks_stay_inside_their_token():
     """`\\w` does not match matras, so "शर्मा" tokenised as ['शर', 'म'] and a
     replacement left a dangling vowel sign: मीरा शर्माा."""
-    from lmh.engine.text import tokenize
+    from psm.engine.text import tokenize
 
     assert [t.text for t in tokenize("मीरा शर्मा को")] == ["मीरा", "शर्मा", "को"]
 
@@ -325,7 +325,7 @@ def test_code_switched_text_is_corrected_per_span(seeded):
 
 def test_unsupported_scripts_abstain_rather_than_guess():
     """Arabic, Han, Cyrillic are outside the nine ISCII-aligned blocks. The
-    honest answer is no keys, not bad keys."""
+    right answer is no keys, not bad keys."""
     encoder = DoubleMetaphoneEncoder()
     assert encoder.encode("مرحبا") == ()
     assert encoder.encode("你好") == ()
@@ -346,7 +346,7 @@ def test_p_ph_and_f_are_one_bucket():
     """`फ` is /p_h/. It is written "ph", heard "f", and spelled "p" by people in
     a hurry. Collapsing ph->f without collapsing f->p left "Patil" and "Phatil"
     in different blocking buckets."""
-    from lmh.adapters.phonetics.indic import fold
+    from psm.adapters.phonetics.indic import fold
 
     assert fold("patil") == fold("phatil") == fold("fatil")
     assert fold("deepak") == fold("deephak")
@@ -356,7 +356,7 @@ def test_p_ph_and_f_are_one_bucket():
 def test_y_and_i_alternate_next_to_vowels_too():
     """The rule fired only after a consonant, which is not where `y` sits in
     Iyer, Iyengar or Yashodhara - the names it most needed to handle."""
-    from lmh.adapters.phonetics.indic import fold
+    from psm.adapters.phonetics.indic import fold
 
     assert fold("iyer") == fold("iier")
     assert fold("iyengar") == fold("iiengar")
@@ -367,7 +367,7 @@ def test_y_and_i_alternate_next_to_vowels_too():
 def test_the_fold_is_idempotent():
     """It is applied to both sides of every comparison, so a second application
     must be a no-op or the index and the query could disagree."""
-    from lmh.adapters.phonetics.indic import fold
+    from psm.adapters.phonetics.indic import fold
 
     for word in (
         "phatil", "iyer", "vishwanathan", "aadith", "keerthana",
@@ -387,11 +387,11 @@ def test_a_veto_outranks_a_proposal_in_the_reported_reason():
     sys.path.insert(0, str(root))
     from evals.harness import pick_reason
 
-    from lmh.adapters.clock.frozen import FrozenClock
-    from lmh.config import Settings
-    from lmh.domain.models import Utterance
-    from lmh.engine.engine import Engine
-    from lmh.seed import load_persona
+    from psm.adapters.clock.frozen import FrozenClock
+    from psm.config import Settings
+    from psm.domain.models import Utterance
+    from psm.engine.engine import Engine
+    from psm.seed import load_persona
 
     clock = FrozenClock("2026-01-15T09:00:00+00:00")
     lexemes, edges = load_persona(root / "evals/data/persona_seed.json", now=clock.now())
@@ -420,7 +420,7 @@ def test_the_generated_tier_holds_its_negative_families():
     sys.path.insert(0, str(root))
     from evals.generated import run
 
-    from lmh.config import Settings
+    from psm.config import Settings
 
     cases = [
         json.loads(line)
@@ -448,8 +448,8 @@ def test_b_and_v_are_alternates_in_every_script_that_has_both():
     makes the same mistake, and the generated tier found it failing identically
     in Devanagari, Telugu and Malayalam.
     """
-    from lmh.adapters.phonetics.dmetaphone import PhoneticStack
-    from lmh.adapters.phonetics.indic_script import readings
+    from psm.adapters.phonetics.dmetaphone import PhoneticStack
+    from psm.adapters.phonetics.indic_script import readings
 
     stack = PhoneticStack()
 
@@ -478,7 +478,7 @@ def test_b_and_v_are_alternates_in_every_script_that_has_both():
 def test_readings_stay_bounded():
     """This is a blocking function: an unbounded bucket costs latency on every
     utterance. The combinatorial expansion is capped rather than open-ended."""
-    from lmh.adapters.phonetics.indic_script import readings
+    from psm.adapters.phonetics.indic_script import readings
 
     # Six ambiguous letters would be 64 combinations without the cap.
     crowded = "बबबवववा"
@@ -489,7 +489,7 @@ def test_readings_stay_bounded():
 def test_tamil_is_deliberately_excluded_from_the_b_v_alternation():
     """Tamil has one labial approximant, so an alternate reading would widen the
     blocking bucket for a confusion the script cannot express."""
-    from lmh.adapters.phonetics.indic_script import SCRIPT_AMBIGUITY
+    from psm.adapters.phonetics.indic_script import SCRIPT_AMBIGUITY
 
     assert 0x0B80 not in SCRIPT_AMBIGUITY
     assert 0x0900 in SCRIPT_AMBIGUITY

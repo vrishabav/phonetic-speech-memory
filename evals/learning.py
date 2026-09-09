@@ -12,7 +12,7 @@ implemented as a check below; an unrecognised key is an error rather than a
 silent skip, because a fixture that asserts something nothing reads is worse
 than no fixture at all.
 
-    python -m lmh.cli eval          # runs both tiers
+    python -m psm.cli eval          # runs both tiers
     python evals/learning.py        # this tier alone, verbose
 """
 
@@ -27,13 +27,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from lmh.adapters.clock.frozen import FrozenClock  # noqa: E402
-from lmh.config import Settings  # noqa: E402
-from lmh.domain.enums import ObservationSource  # noqa: E402
-from lmh.domain.models import Binding, BindingScope  # noqa: E402
-from lmh.engine.engine import Engine  # noqa: E402
-from lmh.engine.learner import observation as make_observation  # noqa: E402
-from lmh.seed import load_persona  # noqa: E402
+from psm.adapters.clock.frozen import FrozenClock  # noqa: E402
+from psm.config import Settings  # noqa: E402
+from psm.domain.enums import ObservationSource  # noqa: E402
+from psm.domain.models import Binding, BindingScope  # noqa: E402
+from psm.engine.engine import Engine  # noqa: E402
+from psm.engine.learner import observation as make_observation  # noqa: E402
+from psm.seed import load_persona  # noqa: E402
 
 DATA = ROOT / "evals" / "data"
 DEFAULT_CLOCK = "2026-01-15T09:00:00+00:00"

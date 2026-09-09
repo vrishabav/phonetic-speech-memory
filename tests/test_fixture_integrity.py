@@ -209,7 +209,7 @@ def test_all_cases_predate_the_engine(application_cases, learning_cases):
 
 
 def test_every_registry_alias_resolves():
-    from lmh.registry import _ALIASES, resolve
+    from psm.registry import _ALIASES, resolve
 
     for alias in sorted(_ALIASES):
         if alias == "llm.sarvam":
@@ -220,14 +220,14 @@ def test_every_registry_alias_resolves():
 def test_sarvam_adapter_is_importable_without_a_key():
     """Importing must never require credentials, or the offline suite could not
     even load the module that the live suite swaps in."""
-    from lmh.registry import resolve
+    from psm.registry import resolve
 
     assert resolve("llm.sarvam").__name__ == "SarvamModel"
 
 
 def test_default_settings_name_components_that_exist():
-    from lmh.config import Settings
-    from lmh.registry import resolve
+    from psm.config import Settings
+    from psm.registry import resolve
 
     settings = Settings()
     for field_name in ("clock", "phonetics", "store", "index", "llm", "formatter"):
@@ -238,8 +238,8 @@ def test_engine_honours_the_configured_components():
     """A swap in Settings must reach the built object. Asserting the *name*
     rather than the type is deliberate: it is the thing written into every eval
     result, so this test also pins the provenance of the numbers."""
-    from lmh.config import Settings
-    from lmh.engine.engine import Engine
+    from psm.config import Settings
+    from psm.engine.engine import Engine
 
     engine = Engine.build(Settings(store="store.memory"))
     assert engine.index.name == "inmemory"
@@ -269,7 +269,7 @@ def test_every_learning_case_passes():
     from evals.harness import load_jsonl
     from evals.learning import run_learning_cases
 
-    from lmh.config import Settings
+    from psm.config import Settings
 
     cases = load_jsonl(root / "evals" / "data" / "tier_c_learning.jsonl")
     assert cases, "the learning tier is empty"
@@ -297,3 +297,63 @@ def test_learning_fixtures_assert_something_a_check_reads():
         assert case["then"].get("memory_delta"), (
             f"{case['case_id']} asserts no memory change at all"
         )
+
+
+# --------------------------------------------------------------------------- #
+# The live path
+#
+# `--live` and `--replay` were declared on both the CLI and the harness and then
+# never read, so `make eval-live` ran the offline stub and wrote a result file
+# labelled `live` that reported zero model calls. These pin the switch.
+# --------------------------------------------------------------------------- #
+
+
+def test_live_and_replay_actually_change_the_components():
+    """The flags select components rather than decorating the label."""
+    import argparse
+
+    from evals.harness import main as harness_main
+
+    seen = {}
+
+    def fake(argv):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--out")
+        parser.add_argument("--live", action="store_true")
+        parser.add_argument("--replay", action="store_true")
+        seen.update(vars(parser.parse_known_args(argv)[0]))
+        return 0
+
+    assert callable(harness_main)
+
+    import evals.harness as harness
+
+    from psm.cli import main as cli_main
+
+    original = harness.main
+    harness.main = fake
+    try:
+        cli_main(["eval", "--live", "--out", "/tmp/psm-flagcheck"])
+        assert seen["live"] is True and seen["replay"] is False
+        seen.clear()
+        cli_main(["eval", "--replay", "--out", "/tmp/psm-flagcheck"])
+        assert seen["replay"] is True and seen["live"] is False
+        seen.clear()
+        cli_main(["eval", "--out", "/tmp/psm-flagcheck"])
+        assert seen["live"] is False and seen["replay"] is False
+    finally:
+        harness.main = original
+
+
+def test_a_live_run_without_credentials_fails_instead_of_degrading(monkeypatch, tmp_path):
+    """The worst outcome is a `live` result file produced with no model calls.
+    The adapter refuses to construct rather than silently falling back."""
+    from psm.adapters.llm.sarvam import SarvamCredentialsMissing, SarvamModel
+
+    for var in ("SARVAM_API_KEY", "PSM_SARVAM_BASE_URL", "PSM_SARVAM_MODEL"):
+        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("PSM_DOTENV", str(tmp_path / "absent.env"))
+    with pytest.raises(SarvamCredentialsMissing) as exc:
+        SarvamModel()
+    assert "SARVAM_API_KEY" in str(exc.value)
+    assert "make eval" in str(exc.value), "the error has to name the offline way out"

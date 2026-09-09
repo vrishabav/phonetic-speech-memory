@@ -37,11 +37,11 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from lmh.adapters.clock.frozen import FrozenClock  # noqa: E402
-from lmh.config import Settings  # noqa: E402
-from lmh.domain.models import Utterance  # noqa: E402
-from lmh.engine.engine import Engine  # noqa: E402
-from lmh.seed import load_persona  # noqa: E402
+from psm.adapters.clock.frozen import FrozenClock  # noqa: E402
+from psm.config import Settings  # noqa: E402
+from psm.domain.models import Utterance  # noqa: E402
+from psm.engine.engine import Engine  # noqa: E402
+from psm.seed import load_persona  # noqa: E402
 
 DATA = ROOT / "evals" / "data"
 STRESS = ROOT / "evals" / "stress"
@@ -300,7 +300,7 @@ def report(summary: dict) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="lmh-eval-generated")
+    parser = argparse.ArgumentParser(prog="psm-eval-generated")
     parser.add_argument("--out", default="evals/results/generated")
     parser.add_argument("--policies")
     parser.add_argument("--phonetics")

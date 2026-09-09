@@ -1,19 +1,24 @@
-# The Words Kivi Keeps - engineering report
+# Phonetic speech memory - engineering report
 
-`language-memory-handler` is the stage that sits between Kivi's formatter and
-the text it inserts, and decides - for this user, in this sentence, in this
-application - whether a word needs to be spelled differently. Most of the time
-it decides that nothing does.
+A dictation system produces text that is phonetically right and
+orthographically wrong. `phonetic-speech-memory` is the stage that sits between
+such a system's formatter and the text it inserts, and decides - for this user,
+in this sentence, in this application - whether a word needs to be spelled
+differently. Most of the time it decides that nothing does.
 
-This report is the long-form version of the submission. It explains the product
-argument, the mechanism in full, the evaluation and what it does and does not
-establish, every decision that was reversed by evidence, and the places the
-system is still wrong. `README.md` is the short version; `RUN.md` is the
-procedure for running it.
+The examples throughout run against one persona: an engineer with colleagues,
+internal services and jargon of their own, working on a dictation product. The
+person and everyone around them are invented; the product and company names are
+the ones this was designed against, and are used only as the vocabulary a
+plausible user would have. The whole persona is one committed JSON file -
+readable in full, and replaceable with somebody else's.
 
-Everything is defined before it is used, and every claim names the command that
-reproduces it. Where a number here disagrees with what you get from that
-command, the number here is wrong.
+This is the long-form version of the submission: the product argument, the
+mechanism, the evaluation and what it does and does not establish, the decisions
+that were reversed by evidence, and the places the system is still wrong.
+`README.md` is the short version; `RUN.md` is the procedure for running it.
+Every claim names the command that reproduces it, and where a number here
+disagrees with that command, the number here is wrong.
 
 ---
 
@@ -46,12 +51,12 @@ command, the number here is wrong.
 16. [The tests](#16-the-tests)
 17. [Every number, and what it means](#17-every-number-and-what-it-means)
 
-**Part VI - the honest parts**
+**Part VI - what went wrong**
 18. [Bugs found, and how each was found](#18-bugs-found-and-how-each-was-found)
 19. [Changes made to test cases, and why](#19-changes-made-to-test-cases-and-why)
 20. [What is not true yet](#20-what-is-not-true-yet)
 21. [Decision log](#21-decision-log)
-22. [Command reference](#22-command-reference)
+22. [Reproducing the numbers](#22-reproducing-the-numbers)
 
 ---
 
@@ -63,8 +68,8 @@ You speak. Software types. Between those two things are **two separate stages**,
 and keeping them separate is the single most important idea for understanding
 this project.
 
-**Stage one: the recogniser (ASR).** Sound in, words out. Sarvam's is Saaras.
-Its output is a transcript of sounds, not a piece of writing:
+**Stage one: the recogniser (ASR).** Sound in, words out - a transcript of
+sounds, not a piece of writing:
 
 ```
     ask adith narayanan to review the pull request before friday
@@ -83,7 +88,7 @@ output *and* the formatted text, and returns a corrected version of the
 formatted text together with the complete reasoning behind every change it made
 and every change it declined to make. It never touches audio.
 
-That boundary is a decision, not an accident, and it buys three things:
+That boundary buys three things:
 
 - the system can be evaluated **deterministically**, because text in produces
   text out with no microphone and no randomness;
@@ -118,8 +123,8 @@ personal, evidence-backed store of the words that belong to one individual.
 
 ## 3. Why it cannot be fixed further upstream
 
-A reasonable first reaction is: fix the recogniser. Give it the user's contact
-list. That fails for reasons worth stating, because they shape the whole design.
+A reasonable first reaction is: fix the recogniser, give it the user's contact
+list. That fails for three reasons, and they shape the whole design.
 
 **The information is not in the audio.** "Adith" and "Aadith" are the same
 sound. A perfect recogniser - one that made zero acoustic errors - would still
@@ -129,8 +134,8 @@ acoustic.
 **Biasing a recogniser toward a word list is dangerous.** You can push an ASR
 system to favour certain words (this is called contextual biasing or hotword
 boosting). But it applies to the whole utterance and it has no notion of sense:
-bias it toward "Kivi" and it will produce "Kivi" when the person genuinely says
-"I ate a kiwi". You have traded a rare error for a frequent one.
+bias it toward "Kivi" and it will produce "Kivi" when the person means the
+fruit. You have traded a rare error for a frequent one.
 
 **The formatter cannot fix it either.** The formatter is a language model doing
 style. It has no idea who Aadith is. If you put the whole contact list in its
@@ -176,8 +181,8 @@ where any intervention is a failure**.
 
 ## 5. Every term, defined
 
-These are used throughout the rest of the document and throughout the code.
-Read them once; refer back as needed. They are grouped by what they describe.
+Used throughout the rest of this document and throughout the code, grouped by
+what they describe.
 
 ### 5.1 The input
 
@@ -191,7 +196,7 @@ Read them once; refer back as needed. They are grouped by what they describe.
 | `persona` | an optional named context ("work", "personal") |
 | `surrounding_text` | text visible on screen around the cursor, if the client can see it |
 
-Code: `src/lmh/domain/models.py`, class `Utterance`.
+Code: `src/psm/domain/models.py`, class `Utterance`.
 
 **Span** - a slice of text identified by character offsets, plus the text
 itself: `(start, end, text)`. Character offsets rather than word indices,
@@ -221,7 +226,7 @@ is one lexeme. Each has:
 | `state` | proposed / active / dormant / suppressed / retired |
 | `prior` | evidence that predates the log (see §8.2) |
 
-Code: `src/lmh/domain/models.py`, class `Lexeme`.
+Code: `src/psm/domain/models.py`, class `Lexeme`.
 
 **Variant** - a wrong form that has stood in for the canonical one. `adith
 narayanan` is a variant of `Aadith Narayanan`. Every variant has a
@@ -230,14 +235,13 @@ evidence about how much to trust it:
 
 | Provenance | Meaning | Strength |
 |---|---|---|
-| `observed` | a recogniser genuinely produced this | strongest - it is grounded in something that happened |
+| `observed` | a recogniser actually produced this | strongest: it is grounded in something that happened |
 | `declared` | the user told us | strong, but never verified in the wild |
 | `generated` | we derived it phonetically ourselves | weakest - it is our guess and needs support |
 
-That ranking is load-bearing. A guard later in the system refuses to correct an
-ordinary English word unless the form was `observed` - because "the recogniser
-has actually done this six times" is a fact, and "this could sound similar" is
-not.
+That ranking is load-bearing: a guard later in the system refuses to correct an
+ordinary English word unless the form was `observed`. "The recogniser has done
+this six times" is a fact; "this could sound similar" is not.
 
 **Guard** - a condition under which a lexeme must not be applied, even when it
 matches. Six kinds:
@@ -253,17 +257,15 @@ matches. Six kinds:
 
 **Binding / scope** - the context a lexeme, or a piece of evidence about it,
 belongs to. Three levels: `global` (anywhere), `app` (one application),
-`persona` (one named context). A binding records **where evidence arrived**, and
-what the system is then entitled to conclude from that depends on what the term
-is: `#eng-asr` names a channel that exists in Slack and nowhere else, so it must
-not travel; a person's name is spelled the same way in every window. §8.4 is the
-whole of that argument, and it is the design decision most worth arguing with.
+`persona` (one named context). A binding records **where evidence arrived**;
+what may be concluded from that depends on the term. `#eng-asr` names a channel
+that exists in Slack and nowhere else, so it must not travel; a person's name is
+spelled the same way in every window. §8.4 is that argument in full.
 
-**Tombstone** - a record that a lexeme was deleted or renamed. Deletion does not
-remove the entry; it marks it, keeping the old surface forms. This is so that
+**Tombstone** - a record that a lexeme was deleted or renamed. Deletion marks
+the entry rather than removing it, keeping the old surface forms, so that
 re-seeing a deleted term does not silently recreate what the user asked to
-forget, and so a renamed term's old spelling still resolves to the new one
-instead of being learned again from zero.
+forget and a renamed term's old spelling still resolves to the new one.
 
 ### 5.3 What is learned from
 
@@ -307,9 +309,9 @@ numbers:
 - **confidence** (the belief) = `alpha / (alpha + beta)`
 - **strength** (how much evidence backs it) = `alpha + beta - 2`
 
-Both matter and they are different questions. A term seen once with no
-contradiction has confidence 0.67 and strength 1. A term seen eight times has
-confidence 0.90 and strength 8. Only the second should act on its own.
+They are different questions. A term seen once with no contradiction has
+confidence 0.67 and strength 1; a term seen eight times has confidence 0.90 and
+strength 8. Only the second should act on its own.
 
 **Decay** - evidence loses weight with age, exponentially, with a **90-day
 half-life**: evidence is worth half as much after three months. `decay =
@@ -358,7 +360,7 @@ configuration change rather than a code change.
 | `PROPOSE` | surface a suggestion, change nothing |
 | `ABSTAIN` | do nothing, and record why |
 
-**Reason code** - why a verdict was reached, from a closed vocabulary of 24
+**Reason code** - why a verdict was reached, from a closed vocabulary of 25
 values (`exact_observed_variant`, `common_word_guard`, `script_mismatch`, …).
 Every case in the evaluation asserts a reason code as well as an output, so a
 case cannot pass for the wrong cause.
@@ -370,10 +372,10 @@ every policy's outcome, and the replacement if any.
 text, every resolution, whether the gate opened, cost, and timestamp. Written
 for **every** utterance, including the ones where nothing happened.
 
-Those terms are the whole vocabulary. The next section is the same set of
-objects again, in the order the code produces them: an `Utterance` arrives, the
-index turns spans into `Candidate`s, the policy stack turns each candidate into
-a `Resolution`, and the whole call is written down as one `Adjudication`.
+The next section is the same objects in the order the code produces them: an
+`Utterance` arrives, the index turns spans into `Candidate`s, the policy stack
+turns each candidate into a `Resolution`, and the whole call is written down as
+one `Adjudication`.
 
 ---
 
@@ -427,7 +429,7 @@ the code.
  └────┬───────────────────────────────────────────────────────────────┘
       │ formatted_text: "Ask Adith Narayanan to review the Kiwi rollout."
       │
-══════╪══════════ language-memory-handler starts here ════════════════════
+══════╪══════════ phonetic-speech-memory starts here ════════════════════
       v
  ┌────────────────────────────────────────────────────────────────────┐
  │ [0] GATE             index.probe(formatted_text)                   │
@@ -661,7 +663,7 @@ reviewer sees - confidence, state, variants, guards - is *recomputed* from that
 log rather than being edited in place. This is the pattern usually called event
 sourcing.
 
-Four requirements fall out of it for free instead of needing machinery:
+Four things the brief asks for fall out of it rather than needing machinery:
 
 | Requirement | How it falls out |
 |---|---|
@@ -674,7 +676,7 @@ The cost is that every load recomputes. With hundreds to low-thousands of terms
 that is sub-millisecond, and the projection doubles as the repair path if the
 cached tables ever drift.
 
-Code: `src/lmh/engine/projector.py`.
+Code: `src/psm/engine/projector.py`.
 
 ### 8.2 Confidence is a Beta posterior, not a counter
 
@@ -711,10 +713,9 @@ confirmed ten times and reverted ten times. A counter cannot tell them apart;
 
 **Decay makes an old memory uncertain rather than wrong.** Because decay
 multiplies the evidence and not the belief, an unused term's alpha and beta both
-shrink toward the uniform prior. A colleague not mentioned since April becomes
-*less certain*, drifting back toward 0.5 - which is the behaviour you actually
-want. A counter would either keep it at full strength forever or drive it
-negative.
+shrink toward the uniform prior: a colleague not mentioned since April drifts
+back toward 0.5 rather than toward 0. A counter would either keep it at full
+strength forever or drive it negative.
 
 **Worked example.** A term seeded with alpha 5, beta 1 - confidence 0.83,
 strength 4:
@@ -727,9 +728,9 @@ strength 4:
 | + a second revert | 6.0 | 5.0 | 0.55 | 9.0 | **suppressed** (guard) |
 | one year later, untouched | 3.0 | 3.0 | 0.50 | 4.0 | dormant |
 
-Note the last row: after a year the belief has *regressed toward no opinion*, not
-inverted. And note that the second revert triggers a guard rather than waiting
-for the arithmetic - two explicit refusals from the user outrank any score.
+After a year the belief has regressed toward no opinion, not inverted. And the
+second revert triggers a guard rather than waiting for the arithmetic: two
+explicit refusals from the user outrank any score.
 
 ### 8.3 A decision is a stack of independent policies
 
@@ -741,14 +742,14 @@ nothing else. So removing one from the list cannot change how the others behave.
 
 **Therefore an ablation is a configuration list, not a code branch.** Every row
 of the ablation table in the README was produced by
-`python -m lmh.cli eval --policies …` with no code edited. That is what makes
+`python -m psm.cli eval --policies …` with no code edited. That is what makes
 "the guards are worth 16 cases" a measurement rather than an assertion.
 
 **Order matters for cost, not for correctness.** The cheap decisive vetoes run
 first so a blocked candidate short-circuits, but because a VETO is absolute the
 result would be the same in any order.
 
-Code: `src/lmh/engine/policies/`, one file per family; `src/lmh/config.py`
+Code: `src/psm/engine/policies/`, one file per family; `src/psm/config.py`
 holds the default list.
 
 ### 8.4 A binding says where evidence arrived, not where a name is valid
@@ -762,9 +763,9 @@ just bookkeeping. The mistake was in what the engine then did with it - a
 mismatch between a lexeme's binding and the current application was an absolute
 veto, on the reasoning that "a Slack handle is wrong in an email".
 
-That reasoning is sound for a Slack handle and wrong for almost everything else,
-because it silently promotes a fact about the user's afternoon into a fact about
-the world. Consider a colleague whose name you first corrected in Mail:
+That is sound for a Slack handle and wrong for almost everything else, because
+it promotes a fact about the user's afternoon into a fact about the world.
+Consider a colleague whose name you first corrected in Mail:
 
 ```
   Shreya Menon    active   conf 0.89   bound to com.microsoft.Outlook
@@ -773,10 +774,9 @@ the world. Consider a colleague whose name you first corrected in Mail:
 
 Dictate *"ask shreya menan for the revised quote"* in Slack. Memory holds an
 exact observed form for that exact mishearing. Under the old rule the output was
-left as **"Shreya Menan"** - the system knew the answer, had recorded the
-answer, and refused to give it because a different window was in focus. To a
-user that reads as the product forgetting who someone is when they switch app,
-which is the precise opposite of what a personal memory is for.
+left as **"Shreya Menan"**: the system knew the answer, had recorded it, and
+refused to give it because a different window was in focus. To a user that reads
+as the product forgetting who someone is when they switch app.
 
 The fix is to separate two questions the veto had been answering at once:
 
@@ -792,10 +792,10 @@ reference to something that is not there. Every other kind - person, org,
 product, place, term, phrase - keeps its spelling wherever it is typed.
 
 So `scope_fit` now vetoes only for `handle` and `code_symbol`. For everything
-else a matching scope *adds* confidence (+0.18) and a mismatching scope simply
-withholds that bonus. Nothing is lost, because the work the veto was really
-doing - keeping two people with the same-sounding name apart - was already being
-done better by the conflict policy, which does not care which window is open.
+else a matching scope *adds* confidence (+0.18) and a mismatching scope withholds
+that bonus. Nothing is lost: the work the veto was really doing - keeping two
+people with the same-sounding name apart - was already being done by the conflict
+policy, which does not care which window is open.
 
 Three cases pin the rule, and they are worth seeing together:
 
@@ -805,11 +805,11 @@ Three cases pin the rule, and they are worth seeing together:
 | "i posted the trace in hash eng asr" | Mail | *unchanged* | `#eng-asr` is a channel that does not exist in Mail |
 | "ask shreya to send the deck across" | Slack | *unchanged* | two people answer to "Shreya" and only one is in scope - being in scope is not evidence about **who was meant** |
 
-The third row is the one that keeps the change honest. It would have been easy,
-having weakened scope as a gate, to let it act as a tiebreaker instead and pick
-the in-scope Shreya. That is a coin-flip with extra steps: which colleague you
-meant is not determined by which window is open, and putting the wrong person's
-name in a message is the single worst thing this system can do.
+The third row is the one that keeps the change from overreaching. Having
+weakened scope as a gate, it would have been easy to let it act as a tiebreaker
+and pick the in-scope Shreya. That is a coin-flip with extra steps: which
+colleague you meant is not determined by which window is open, and putting the
+wrong person's name in a message is the worst thing this system can do.
 
 **What it cost.** The derived evaluation had a 69-case `scope_mismatch` family
 that asserted the old semantics for *every* kind, and 66 of them broke. They
@@ -821,13 +821,13 @@ correct). One hand-written case, **A15-001**, was added for the same reason and
 is flagged `authored_before_engine: false`, because it was written after the
 engine gave the wrong answer. §19 records both.
 
-**Why it was not caught earlier.** Because the fixture and the engine agreed.
-The generated family was built from the same belief the engine held, so it
-confirmed it 69 times over. That is the failure mode of any generated suite whose
-author also wrote the system, and no amount of running it would have surfaced
-this: it took someone using the demo and saying "that is obviously wrong".
+**Why it was not caught earlier.** The fixture and the engine agreed: the
+generated family was built from the same belief the engine held, so it confirmed
+it 69 times over. That is the failure mode of any generated suite whose author
+also wrote the system. It took someone using the demo and saying "that is
+obviously wrong".
 
-Code: `src/lmh/engine/policies/context.py`, `ScopeFitPolicy` and
+Code: `src/psm/engine/policies/context.py`, `ScopeFitPolicy` and
 `APP_NATIVE_KINDS`.
 
 ## 9. Phonetics from first principles
@@ -877,7 +877,7 @@ treatment and only convergence matters.
 The two rules in bold were added late, after the derived evaluation tier found
 them missing. §18 tells that story.
 
-Code: `src/lmh/adapters/phonetics/indic.py`.
+Code: `src/psm/adapters/phonetics/indic.py`.
 
 ### 9.3 Metaphone keys and blocking
 
@@ -887,8 +887,8 @@ representing roughly how it sounds. `metaphone("Kivi") = "KF"`.
 **Blocking** is the reason it is used. Comparing a span against all 367 terms in
 memory would be slow. Instead every term is indexed under its phonetic keys, and
 a span is only compared against terms that share a key. Typically that is a
-handful rather than hundreds - which is why the median call is 0.61 ms with a
-367-term memory.
+handful rather than hundreds, which is why a call that finds nothing costs about
+0.22 ms and one that retrieves about 1.7 ms against a 367-term memory (S5).
 
 Keys are computed on the *folded* form, and three sets are generated per form:
 the whole phrase, each token, and the consonant skeleton. Minimum key length is
@@ -904,7 +904,7 @@ blend of three measures, because each catches errors the others miss:
   + 0.25 × normalised indel         how many edits apart?
 ```
 
-Code: `src/lmh/adapters/phonetics/dmetaphone.py`.
+Code: `src/psm/adapters/phonetics/dmetaphone.py`.
 
 ### 9.4 Native Indic scripts
 
@@ -939,10 +939,10 @@ Three details worth knowing:
 suppressed. `कमल` is "kamala" or "kamal" depending on the word. Both readings are
 emitted; the comparator decides.
 
-**Ambiguous letters.** ब/व (b/v) are read both ways almost everywhere - not just
+**Ambiguous letters.** ब/व (b/v) are read both ways almost everywhere, not just
 in Bengali, which merged them outright. Every combination is emitted, capped at
-three ambiguous positions per word, because this is a *blocking* function and a
-bucket that grows as 2ⁿ costs latency on every utterance.
+three ambiguous positions per word: this is a *blocking* function, and a bucket
+growing as 2ⁿ costs latency on every utterance.
 
 **Tokenisation.** Python's `\w` does **not** match Indic combining marks -
 matras, virama and anusvara are all Unicode category `Mn`/`Mc`, and
@@ -955,16 +955,15 @@ text can match a Latin-canonical memory, so the system can tell they are the sam
 person. Cross-script *rewriting* is vetoed. Correcting someone's spelling is the
 job; silently changing the alphabet they chose to write in is not.
 
-Code: `src/lmh/adapters/phonetics/indic_script.py`,
-`src/lmh/engine/policies/script.py`.
+Code: `src/psm/adapters/phonetics/indic_script.py`,
+`src/psm/engine/policies/script.py`.
 
 ### 9.5 Where the phonetic codes come from
 
 There is no external phonetic dictionary and no pronunciation model. Codes are
 computed from the spelling, at index time and at query time, by the pipeline
-above. That matters for three reasons: it works on names no dictionary contains,
-it needs no download, and it is deterministic - the same string always produces
-the same keys, so a result is reproducible.
+above. So it works on names no dictionary contains, needs no download, and is
+deterministic: the same string always produces the same keys.
 
 ## 10. How it learns
 
@@ -1000,7 +999,7 @@ again from zero.
 **Deletions.** An explicit forget tombstones the lexeme rather than dropping it,
 so a later sighting does not silently recreate what the user deleted.
 
-Code: `src/lmh/engine/learner.py`.
+Code: `src/psm/engine/learner.py`.
 
 ---
 
@@ -1009,7 +1008,7 @@ Code: `src/lmh/engine/learner.py`.
 ## 11. Every file, and what it does
 
 ```
-src/lmh/
+src/psm/
   domain/      the vocabulary and the data shapes. No input, no output.
   ports/       descriptions of replaceable components. No working code.
   adapters/    the working components: phonetics, index, storage, clock,
@@ -1028,28 +1027,19 @@ tests/         automated tests
 Three documents, and no more: `README.md` (what it is and how to run it),
 `RUN.md` (the exact review procedure), and this report.
 
-### `domain/` - shapes and vocabularies, no behaviour
+**`domain/`** - `enums.py` holds every closed vocabulary: sources, provenances,
+states, guard kinds, verdicts, signals, and the 25 reason codes. Each value
+appears in the database, in fixtures and in the API, so adding one is a schema
+change. `models.py` holds frozen dataclasses for everything in §5 - frozen
+because memory is derived, and a mutable one would eventually be mutated behind
+the log's back.
 
-**`enums.py`** - every closed vocabulary: sources, provenances, states, guard
-kinds, verdicts, signals, and the 24 reason codes. Each value appears in the
-database, in fixtures and in the API, so adding one is a schema change and
-renaming one is a migration. Uses `StrEnum` so members *are* their string values
-and serialise into JSON and SQL with no `.value` at the call site.
+**`ports/`** - seven `Protocol` definitions with no implementations: `clock`,
+`phonetics`, `index`, `store`, `llm`, `formatter`, `policy`. Nothing in
+`engine/` imports an adapter; it receives one. This is what makes ablations and
+component swaps configuration rather than edits.
 
-**`models.py`** - frozen dataclasses for everything in §5: `Utterance`, `Span`,
-`Observation`, `Variant`, `Guard`, `Confidence`, `Lexeme`, `Tombstone`,
-`Candidate`, `PolicyOutcome`, `Resolution`, `Adjudication`. Frozen because
-memory is derived: if these were mutable, something would eventually mutate one
-and the log would stop being authoritative.
-
-### `ports/` - the swap surface
-
-Seven `Protocol` definitions with no implementations: `clock`, `phonetics`,
-`index`, `store`, `llm`, `formatter`, `policy`. Nothing in `engine/` imports an
-adapter; it receives one. This is what makes ablations and component
-swaps configuration rather than edits.
-
-### `adapters/` - the working parts
+**`adapters/`** - the working parts:
 
 | File | What it does |
 |---|---|
@@ -1066,54 +1056,25 @@ swaps configuration rather than edits.
 | `formatter/passthrough.py` | the frozen formatter used by the evaluation |
 | `formatter/llm_formatter.py` | the live one: memory-conditioned prompt, output verified |
 
-### `engine/` - the machinery
+**`engine/`** - the machinery:
 
-**`text.py`** - tokenisation, n-gram spans, protected regions (quotes and code),
-case matching, and right-to-left splicing. The tokeniser explicitly includes the
-Indic block range, for the reason in §9.4.
-
-**`projector.py`** - replays the log into memory state: confidence, strength,
-decay, derived guards, derived state. This is where §8.1 and §8.2 live.
-
-**`learner.py`** - §10. Judges observations, attributes them, handles
-instructions, renames and deletions.
-
-**`guards.py`** - synthesises guards rather than requiring hand-written ones. Any
-term whose surface is an ordinary English word, or a run of ordinary words, or a
-short all-caps acronym, is protected automatically. Plus the decisive rule: **an
-ordinary English word that the recogniser has never actually produced for a term
-is never corrected**, whatever the context looks like.
-
-**`policies/`** - the eleven policies, grouped by family:
-
-| File | Policies |
+| File | What it does |
 |---|---|
-| `suppression.py` | `suppression` |
-| `context.py` | `verbatim`, `scope_fit`, `common_word_guard`, `cooccurrence` |
-| `lexical.py` | `already_canonical`, `exact_variant`, `phonetic` |
-| `script.py` | `script_fit` |
-| `conflict.py` | `conflict` |
-| `recency.py` | `recency` |
+| `text.py` | tokenisation, n-gram spans, protected regions, case matching, right-to-left splicing. The tokeniser explicitly includes the Indic block range (§9.4) |
+| `projector.py` | replays the log into memory state: confidence, strength, decay, derived guards, derived state (§8.1, §8.2) |
+| `learner.py` | §10: judges observations, attributes them, handles instructions, renames and deletions |
+| `guards.py` | synthesises guards rather than requiring hand-written ones, plus the decisive rule: an ordinary English word the recogniser has never actually produced for a term is never corrected |
+| `policies/` | the eleven policies: `suppression.py`; `context.py` (`verbatim`, `scope_fit`, `common_word_guard`, `cooccurrence`); `lexical.py` (`already_canonical`, `exact_variant`, `phonetic`); `script.py`; `conflict.py`; `recency.py` |
+| `adjudicator.py` | runs the stack, sums the weights, applies the thresholds, picks the verdict |
+| `applier.py` | splices accepted replacements into the text |
+| `engine.py` | the facade: `build()` wires everything, `handle()` is the hot path, `dictate()` runs the formatter first, `observe()` is the learning path |
 
-**`adjudicator.py`** - runs the stack, sums the weights, applies the thresholds,
-and picks the verdict.
+**`api/`** - `app.py` is FastAPI, one endpoint per capability; `schemas.py`
+converts domain objects to JSON and is shared with the evaluation, so the API
+and `cases.jsonl` speak the same shapes; `ui.py` is the page, as one string,
+with no build step and no CDN.
 
-**`applier.py`** - splices accepted replacements into the text.
-
-**`engine.py`** - the facade. `Engine.build(settings)` wires everything;
-`handle()` is the hot path; `dictate()` runs the formatter first; `observe()` is
-the learning path.
-
-### `api/` - the demonstration
-
-**`app.py`** - FastAPI. One endpoint per capability, and nothing else.
-
-**`schemas.py`** - domain objects to JSON, shared with the evaluation so the API
-and `cases.jsonl` speak the same shapes.
-
-**`ui.py`** - the page, as one string. No build step, no framework, no CDN.
-
-### `evals/` - the evidence
+**`evals/`** - the evidence:
 
 | File | What it is |
 |---|---|
@@ -1124,9 +1085,7 @@ and `cases.jsonl` speak the same shapes.
 | `data/personas/` | the native-script and Latin personas the derived tier uses |
 | `gen/indic_names.py` | native-script names and offset-based confusion rules |
 | `gen/build.py` | builds the derived tier deterministically |
-| `harness.py` | runs the specification tier |
-| `learning.py` | runs the learning tier |
-| `generated.py` | runs the derived tier and reports the breakdowns |
+| `harness.py`, `learning.py`, `generated.py` | the three runners |
 | `stress/` | generator and runner for the six stress experiments |
 | `explorer.py` | turns results into one browsable page |
 | `schema/case.schema.json` | the JSON Schema every case is validated against |
@@ -1134,8 +1093,8 @@ and `cases.jsonl` speak the same shapes.
 
 ## 12. Configuration and swapping parts
 
-Everything replaceable is named by a string in `src/lmh/config.py`, resolved
-through `src/lmh/registry.py` by alias or dotted path:
+Everything replaceable is named by a string in `src/psm/config.py`, resolved
+through `src/psm/registry.py` by alias or dotted path:
 
 | Setting | Default | Alternatives |
 |---|---|---|
@@ -1147,7 +1106,7 @@ through `src/lmh/registry.py` by alias or dotted path:
 | `formatter` | `formatter.passthrough` | `formatter.llm` |
 | `policies` | the eleven, in order | any subset - this is how ablations work |
 
-Every one is overridable by environment variable (`LMH_LLM`, `LMH_POLICIES`, …)
+Every one is overridable by environment variable (`PSM_LLM`, `PSM_POLICIES`, …)
 and by `.env`. Four tests assert that every alias resolves *and* that the engine
 actually honours what is set - because for a while one of them did not, and every
 result file recorded a component that had never run (§18, bug 9).
@@ -1166,11 +1125,10 @@ Thresholds live in the same place:
 | `learn_max_phonetic_distance` | 0.45 | above this, an edit is a rewrite not a respelling |
 | `reverts_to_suppress` | 2 | reverts before a suppression guard is created |
 
-None of these is a knife-edge. Experiment S3 in the stress suite sweeps the two
-that matter and shows a plateau: `apply_score` gives the same result anywhere
-between 0.35 and 0.55, and only above 0.60 does the system start missing
-corrections. A threshold sitting in the middle of a flat region is defensible; a
-threshold perched on a cliff is fitted.
+None of these is a knife-edge. Experiment S3 sweeps the two that matter and
+shows a plateau: `apply_score` gives the same result anywhere between 0.35 and
+0.55, and only above 0.60 does the system start missing corrections. A threshold
+in the middle of a flat region is defensible; one perched on a cliff is fitted.
 
 ## 13. The demonstration app
 
@@ -1204,31 +1162,18 @@ still fails is returned as JSON with the reason in it and shown in a banner at
 the top of the page, rather than as a stock phrase about the client's own
 confusion.
 
-**Why there is no microphone.** An earlier version of this page had one, backed
-by a local open-source recogniser (faster-whisper, with PocketSphinx as a
-floor), on the argument that reading "a recogniser might hear Kivi as kiwi" is a
-claim while hearing it happen is evidence. That argument was wrong in practice,
-for two reasons.
+**Why there is no microphone.** An earlier version had one, backed by a local
+open-source recogniser, on the argument that hearing "Kivi" come out as "kiwi"
+is better evidence than reading about it. Two things were wrong with that. A
+small offline model is inaccurate in ways that have nothing to do with this
+project, and every one of those errors landed on the memory system: a transcript
+that came back as something unrelated made a correct abstention look like a bug.
+And §1 says this project is a third stage that never touches audio, which is
+what §14's claim to a deterministic offline evaluation rests on. Text in, text
+out is the contract the evaluation measures, so the browser and the numbers now
+describe the same system.
 
-The first is measurement. A small offline model is inaccurate in ways that have
-nothing to do with this project, and every one of those errors landed on the
-memory system: a transcript that came back as something unrelated made a correct
-abstention look like a bug, and a reviewer spent their attention judging the
-recogniser instead of the thing being submitted. The system under test quietly
-became the wrong system.
-
-The second is honesty about the boundary. §1 says this project is a third stage
-that never touches audio, and §14's entire claim to a deterministic, offline
-evaluation rests on that.
-Putting a recogniser inside the demo contradicted the architecture it was meant
-to illustrate. Text in, text out, is exactly the contract the evaluation
-measures - so the browser and the numbers now describe the same system, and the
-evidence that recognisers really make these errors lives where it belongs: in
-the derived tier's 1,842 cases, whose mishearings are generated from documented
-confusion rules rather than from whichever model happened to be installed.
-
-**Nothing is behind a button that is not also on the API and in the CLI.** A demo
-that can do things the API cannot is a demo of the demo.
+**Nothing is behind a button that is not also on the API and in the CLI.**
 
 ---
 
@@ -1236,15 +1181,15 @@ that can do things the API cannot is a demo of the demo.
 
 ## 14. The evaluation: three tiers and what each proves
 
-Three files, three runners, reported separately - because averaging them would
-let 1,842 easy cases drown out 69 hard ones.
+Three files, three runners, reported separately: averaging them would let 1,842
+easy cases drown out 69 hard ones.
 
 ### 14.1 The taxonomy the cases test against
 
-The brief gives exactly one example and says that discovering the rest is part of
-the assignment. This is that discovery, written before the engine. Each class has
-a stable id used as the `class` field of every case, so a result can be sliced by
-class and a regression traced to a *kind* of failure rather than to a case number.
+The brief gives one example and says discovering the rest is part of the
+assignment. This is that discovery, written before the engine. Each class has a
+stable id used as the `class` field of every case, so a regression can be traced
+to a *kind* of failure rather than to a case number.
 
 Three outcomes exist: **APPLY** (change the text), **PROPOSE** (surface a
 suggestion, change nothing), **ABSTAIN** (do nothing, and record why).
@@ -1359,10 +1304,9 @@ Every verdict carries one, and the evaluation reports accuracy *per reason code*
 
 ### 14.2 Tier C application - 69 cases - *the specification*
 
-Hand-written, **before the engine existed**, and a test enforces that: every case
+Hand-written **before the engine existed**, and a test enforces it: every case
 carries `authored_before_engine`, and the suite fails if more than 20% were
-authored afterwards. Each case is a judgement about what the product should do,
-worth arguing about on its own.
+authored afterwards.
 
 Structure: `given` (asr text, formatted text, app, optional memory overrides) and
 `then` (expected output, expected reason code, optional model-call budget).
@@ -1398,11 +1342,8 @@ that makes it worth anything: **its expected outcome comes from the
 construction, never from what the engine did**. A case that says "take the
 canonical `Vaishnavi Kulkarni`, apply the documented v→w confusion, put it in a
 carrier sentence in the app this term is bound to" knows the right answer before
-the engine is built.
-
-Generating inputs and recording the engine's replies as the expectation would
-produce a suite that can never fail - the usual way a large benchmark comes to
-mean nothing.
+the engine is built. Recording the engine's replies as expectations instead
+would produce a suite that can never fail.
 
 Twelve families across four personas and ten scripts. Three of the personas have
 **no hand-written guards at all**, and none is the one the thresholds were tuned
@@ -1460,22 +1401,23 @@ Six experiments that measure what a hand-written case list structurally cannot.
 neutral sentences are harvested from Python standard-library docstrings, so
 "zero false positives on real prose" is a claim about prose nobody here chose.
 
-**Two taxonomy classes exist because of this suite.** Running a 367-term memory
-over that corpus found that a memory for the acronym `WER` was rewriting the
-word *"were"* - 20 times in 4,000 sentences - and that `Ishaan` was rewriting
-the phrase *"is an"*. Between them they were **every** false positive the system
-had. No amount of thinking up cases produced either one.
+**Two taxonomy classes exist because of this suite.** A memory for the acronym
+`WER` was rewriting the word *"were"* - 20 times in 4,000 sentences - and
+`Ishaan` was rewriting the phrase *"is an"*. Between them they were **every**
+false positive the system had, and no amount of thinking up cases produced
+either.
 
 ## 16. The tests
 
-**150 tests** in five files. `make test`.
+**157 tests** in six files. `make test`.
 
 | File | n | What it protects |
 |---|---|---|
-| `test_fixture_integrity.py` | 19 | properties of the *evaluation itself*: schema validity, unique ids, expectation self-consistency, taxonomy coverage, the negative-case ratio, that every learning fixture executes and asserts something a check reads, and that every configurable component name resolves and is honoured |
+| `test_fixture_integrity.py` | 21 | properties of the *evaluation itself*: schema validity, unique ids, expectation self-consistency, taxonomy coverage, the negative-case ratio, that every learning fixture executes and asserts something a check reads, and that every configurable component name resolves and is honoured |
 | `test_engine.py` | 40 | the engine's mechanisms: the projection under supporting and contradicting evidence, prior decay, instruction parsing, renames, deletions, suppression |
 | `test_robustness.py` | 67 | regression guards for failures the stress and derived suites found - the Indic path, the fold's coverage, the b/v alternation, and the negative half of the derived tier run inline |
 | `test_api.py` | 12 | one test per capability the brief asks a reviewer to exercise, plus scope enforcement, Unicode round-tripping and the zero-cost path |
+| `test_live_path.py` | 5 | the live model path end to end against a stub OpenAI-compatible endpoint on localhost: memory reaching the prompt, a rewriting reply being rejected, a 500 degrading rather than crashing, the no-memory ablation really removing the memory, and the key never appearing in a prompt or a result |
 | `test_demo.py` | 12 | the demo as a deliverable: every prepared example still behaving as its label claims, a database with no schema being migrated rather than reported, an unexpected failure arriving as JSON with a reason in it, one observation reporting one changed term, the explorer being reachable, the page calling nothing the API does not expose, no external resource loaded, and - using `node --check` - that its embedded JavaScript actually parses |
 
 That last one exists because the client is ~200 lines of JavaScript inside a
@@ -1491,12 +1433,15 @@ Learning tier           15 / 15
 False interventions      0 / 998 negative cases    (0.00%)
 Corruptions on 4,000 sentences of real prose   0    (0.00%)
 Unseen mishearings fixed automatically            87.2%
-Unseen mishearings corrupted                       2.1%
+Unseen mishearings not exactly canonical           2.1%
 Model calls in the entire evaluation                  0
-Median latency, derived tier                    0.62 ms
-Throughput, 367-term memory             2,547 sentences/sec
-Tests                                               150
+Median latency, derived tier                    0.67 ms
+Throughput, 367-term memory            ~2,300 sentences/sec
+Tests                                               157
 ```
+
+The two timing figures are the only ones here that depend on the machine; every
+other number is exact and reproduces anywhere.
 
 **Which of these matter, and why:**
 
@@ -1507,11 +1452,12 @@ so they are counted separately everywhere.
 **`0 model calls`** means every number above is reproducible on any machine with
 no key and no network. It is also the cost story: the common case is free.
 
-**`87.2% of unseen mishearings`** is the honest generalisation number, and it is
-the one to be sceptical of - it is measured on rule-generated forms, not on real
+**`87.2% of unseen mishearings`** is the generalisation number, and the one to be
+sceptical of - it is measured on rule-generated forms, not on real
 recogniser output, because no real corpus of this user's mishearings exists. The
-2.1% corruption figure beside it is the one that would block a launch, and it is
-reported next to the success rate for exactly that reason.
+2.1% figure beside it counts every output that is not the exact canonical form,
+including a half-correction and a casing difference (§20), and is reported next
+to the success rate rather than filtered.
 
 **The ablations** are what turn these into evidence rather than assertions:
 
@@ -1532,15 +1478,15 @@ guards are not a safety wrapper around the product, they are the product.
 Removing phonetics costs eleven *useful* corrections and no harmful ones, which
 is the expected shape: phonetics decides how much the system can help, guards
 decide how much it can hurt. Every row was produced by
-`python -m lmh.cli eval --policies …` with no code edited.
+`python -m psm.cli eval --policies …` with no code edited.
 
 ---
 
-# Part VI - the honest parts
+# Part VI - what went wrong
 
 ## 18. Bugs found, and how each was found
 
-Nineteen. The column that matters is the third one: almost none would have been
+Twenty. The column that matters is the third one: almost none would have been
 found by reading the code, and each was found by a *different kind* of looking.
 
 | # | Bug | Found by | Symptom |
@@ -1564,34 +1510,30 @@ found by reading the code, and each was found by a *different kind* of looking.
 | 17 | **The teach panel reported all 24 terms as changed** | **clicking a button in the demo** | **"0.833 -> 0.833" for every term, burying the one that moved** |
 | 18 | **A binding was read as a licence** | **someone using the demo and saying "that is obviously wrong"** | **a name with an exact recorded mishearing left uncorrected because a different window was in focus** |
 | 19 | **The self-healing migration raced itself** | **a console error on a clean-start rehearsal** | **the page's first two calls both ran the migration; one returned 503 and the header read "memory unreadable"** |
+| 20 | **`make eval-live` never ran anything live** | **typing every documented command in order** | **`--live` was declared and never read, so the target ran the offline stub and wrote a result file labelled `live` reporting 0 model calls** |
 
 The first eight are ordinary engineering bugs found by ordinary means. The rest
-each name a *class* of failure that testing does not catch, and they are the
-ones worth dwelling on.
+each name a *class* of failure that testing does not catch. Three of them - 9,
+10 and 20 - are the same class: configuration that claims something nothing
+checks.
 
 ### 9 - a config field the engine ignores
 
-`Settings.index` said `index.sqlite_fts`. The module had never been written. The
-engine hardcoded the in-memory index and never read the field. Every ablation
-result therefore recorded a component that did not run.
-
-Nothing failed, because nothing checked. The fix is four tests that assert every
-alias resolves *and* that a swap in `Settings` reaches the built object.
-
-**The general lesson:** a configuration field that nothing verifies is worse than
-no configuration field, because it makes a false claim in every artefact it
-appears in.
+`Settings.index` said `index.sqlite_fts`. The module had never been written; the
+engine hardcoded the in-memory index and never read the field, so every ablation
+result recorded a component that did not run. Nothing failed, because nothing
+checked. Four tests now assert that every alias resolves *and* that a swap in
+`Settings` reaches the built object. A configuration field nothing verifies is
+worse than no field, because it makes a false claim in every artefact it appears
+in.
 
 ### 10 - an ablation weaker than its name
 
 Removing the `phonetic` *policy* leaves phonetic *retrieval* running, so it
 measured almost nothing: 65/69. Replacing the encoder with a null one removes
-retrieval too: 57/69. The first was being reported under the name "no
-phonetics", which understated the value of the rest of the stack by a factor of
-three. Both are now reported, under names that say which is which.
-
-**The general lesson:** an ablation measures whatever it actually removes, not
-whatever its label says.
+retrieval too: 57/69. The first was reported under the name "no phonetics",
+understating the rest of the stack by a factor of three. Both are now reported,
+under names that say which is which.
 
 ### 11 - the demo found what 112 tests could not
 
@@ -1599,88 +1541,63 @@ Confidence is derived by replaying the observation log. A lexeme arriving with
 evidence already attached - a seeded persona, an imported dictionary - had
 nowhere to put it, so the projection used the stored number *only while the log
 was empty*. The first correction of such a term replaced a history of four
-sightings with an arithmetic over one, and confidence went **down**. A supporting
-edit could demote a term from `active` to `proposed`.
+sightings with an arithmetic over one, and confidence went **down**. A
+supporting edit could demote a term from `active` to `proposed`.
 
 Every test and every evaluation case missed it, for a structural reason: each
 fixture pins its own memory state and then makes one decision. **None of them
 adds evidence to a seeded term and looks again.** Thirty seconds of clicking
-"Record evidence" in the demo surfaced it immediately.
+"Record evidence" in the demo surfaced it.
 
-The fix is `Lexeme.prior`: pre-log evidence held explicitly, with the projection
-becoming `prior + log`, a pure function of both, and Beta(1,1) for a term that
-really did start from nothing. Migration `0002` adds the columns. It also made a
-documented claim true for the first time - "decay makes an old memory uncertain
-rather than wrong" was false for any seeded term, because its evidence had no
-date to grow old from.
-
-**The general lesson, and the reason the demo is part of the deliverable:** an
-evaluation tests the situations you thought of.
+The fix is `Lexeme.prior`: pre-log evidence held explicitly, the projection
+becoming `prior + log`, and Beta(1,1) for a term that really did start from
+nothing. Migration `0002` adds the columns. It also made a documented claim true
+for the first time - "decay makes an old memory uncertain rather than wrong" was
+false for any seeded term, whose evidence had no date to grow old from.
 
 ### 12 - fixtures with no runner
 
 `tier_c_learning.jsonl` existed, was schema-checked, and was **never executed**.
-Fifteen assertions about learning behaviour were decorative.
-
-Writing `evals/learning.py` and running them found six behaviours that had been
-specified in the taxonomy from the beginning and never implemented: suppression
-on repeat reverts, instruction parsing, casing-only edits, renames, deletions and
-prior decay. All six are implemented now, and the learning tier runs as part of
-`make eval` so it cannot silently detach again.
-
-**The general lesson:** a fixture nothing runs is a comment.
+Writing `evals/learning.py` and running its fifteen assertions found six
+behaviours that had been specified from the beginning and never implemented:
+suppression on repeat reverts, instruction parsing, casing-only edits, renames,
+deletions and prior decay. All six are implemented now, and the learning tier
+runs inside `make eval` so it cannot silently detach again.
 
 ### 13 - the fold was one-directional
 
 Slicing the derived tier by confusion rule showed `sh→s` passing 100% while
 `s→sh` passed 48%, and `dh→d` passing 100% while `d→dh` passed 59%. That
-asymmetry should have been impossible - the fold is applied to both sides of
-every comparison - and chasing it found two real holes:
+asymmetry should have been impossible, since the fold is applied to both sides
+of every comparison, and chasing it found two real holes: nothing collapsed
+`p`/`ph`/`f`, so "Patil" and "Phatil" sat in different blocking buckets, and
+`y→i` fired only after a consonant, which is not where `y` sits in *Iyer* or
+*Yashodhara*.
 
-- nothing collapsed `p`/`ph`/`f`, so "Patil" and "Phatil" sat in different
-  blocking buckets;
-- `y→i` fired only after a consonant, which is not where `y` sits in *Iyer*,
-  *Iyengar* or *Yashodhara*.
-
-Fixing both moved the derived tier from 92.8% to 99.5%, with **zero** new false
-positives across 1,032 negative cases and 4,000 sentences of real prose - the
+Fixing both moved the derived tier from 92.8% to 99.5%, with zero new false
+positives across 1,032 negative cases and 4,000 sentences of real prose. The
 gate in fact opened *less* often afterwards, 43.4% → 28.7%, because the wider
-fold changed which English words collide.
-
-**The general lesson:** a single pass rate would have shown none of this. The
-breakdown is the product of an evaluation, not the total.
+fold changed which English words collide. A single pass rate would have shown
+none of this.
 
 ### 14 - b/v is not a Bengali peculiarity
 
 Slicing by script showed every remaining Indic failure was one letter, failing
-identically in Devanagari, Telugu, Odia and Malayalam. Bengali merged the sounds
-outright, which is why it was listed first, but any recogniser choosing between
-ब and व makes the same mistake.
-
-The same finding exposed a second bug: alternate readings were all-or-nothing.
-वैष्णवी contains two `व`, so the alternative was "baishnabii" when the
-recogniser's actual error is "baishnavii" - one letter, not both - and the word
-could never match its own mishearing. Readings are now emitted per combination,
-capped at three ambiguous positions because this is a blocking function and a 2ⁿ
-bucket costs latency on every utterance.
+identically in Devanagari, Telugu, Odia and Malayalam. The same finding exposed
+a second bug: alternate readings were all-or-nothing. वैष्णवी contains two `व`,
+so the alternative was "baishnabii" when the recogniser's actual error is
+"baishnavii" - one letter, not both - and the word could never match its own
+mishearing. Readings are now emitted per combination.
 
 ### 15 - the generator was wrong before the engine was
 
-The very first run of the derived tier reported **eleven harmful interventions**
-in its easiest family. All eleven were the generator's fault: it assigned target
+The first run of the derived tier reported **eleven harmful interventions** in
+its easiest family. All eleven were the generator's fault: it assigned target
 applications round-robin and demanded that an app-bound term be corrected inside
-a *different* app. The engine refused, correctly.
-
-Nine more "failures" were the same story: the `s→sh` rule firing on an
-already-aspirated `s` to produce "Deshhpande" - a doubled h that appears in no
-romanisation of anything and that nobody would ever type.
-
-Both were fixed, and the first mistake became a real test family
-(`scope_mismatch`, 69 cases).
-
-**The general lesson, and the one that makes the whole tier worth anything:** a
-generated expectation is worth nothing unless the generator models the same rules
-the system does.
+a *different* app. The engine refused, correctly. Nine more "failures" were the
+`s→sh` rule firing on an already-aspirated `s` to produce "Deshhpande", a
+doubled h that appears in no romanisation of anything. A generated expectation
+is worth nothing unless the generator models the same rules the system does.
 
 ### 16 - the worst possible failure mode for a demo
 
@@ -1688,44 +1605,31 @@ the system does.
 perfectly; `/health`, `/memory` and `/dictate` all died on `no such table:
 lexeme`; and because Starlette answers an unhandled error with a plain-text
 body, the page's `response.json()` threw and it reported **"API unreachable"**
-and **"unreadable response"** - about a server that was running, listening, and
+and **"unreadable response"** about a server that was running, listening, and
 answering with a completely clear error.
 
-Two things were wrong, and they compound. The application refused to fix a
-condition it could fix: the migration exists, it is two revisions long, and
-running it is one subprocess. And the interface described its own confusion
-rather than the server's problem, which is precisely the failure this project
-exists to argue against - a system that says nothing useful when it could say
-exactly what happened.
+Two things were wrong and they compound. The application refused to fix a
+condition it could fix - the migration exists and running it is one subprocess -
+and the interface described its own confusion rather than the server's problem.
 
-Both are fixed. `engine()` runs the migration when the first query finds no
-schema and then seeds, so the demo comes up working on a fresh clone; an
-`Exception` handler returns `{"detail": "..."}` so the reason survives the trip;
-and the page shows that reason in a banner instead of a stock phrase. The
-migration still owns the schema - the app runs it, it does not duplicate it.
+`engine()` now runs the migration when the first query finds no schema and then
+seeds; an `Exception` handler returns `{"detail": "..."}` so the reason survives
+the trip; and the page shows that reason in a banner. The migration still owns
+the schema: the app runs it, it does not duplicate it.
 
 Found by starting the server on a machine that had never run `make seed`. Not by
-a test, because every test built its engine over an already-migrated database or
-an in-memory store - the one path a reviewer takes first was the one path
-nothing covered. There is a test for it now.
+a test - every test built its engine over an already-migrated database or an
+in-memory store, so the one path a reviewer takes first was the one path nothing
+covered. There is a test for it now.
 
 ### 17 - a report that named everything named nothing
 
-The teach panel promises to report *what changed*, which is the whole point of
-it: "recorded" tells a reviewer nothing, "this term moved from proposed to
-active" is the observable the learning design exists to produce. Recording one
-correction reported **all 24 terms**, most of them as `confidence 0.833 ->
-0.833`.
-
-The guard was `abs(before - after) > 1e-9`, which reads as generous and is
-useless here. Every confidence is a decayed quantity read against the clock, so
-the projections either side of an observation are microseconds apart and *every*
-term in memory differs somewhere around the twelfth decimal place. The
-comparison is now made at the precision actually displayed, so the one term that
-moved is the one term listed.
-
-Found by clicking the button and reading the output - the same way bug 11 was
-found, and the second time that has been the only way.
+Recording one correction made the teach panel report **all 24 terms**, most of
+them as `confidence 0.833 -> 0.833`. The guard was `abs(before - after) > 1e-9`,
+which reads as generous and is useless here: every confidence is decayed against
+the clock, so the projections either side of an observation differ for *every*
+term somewhere around the twelfth decimal place. The comparison is now made at
+the precision actually displayed.
 
 ### 18 - the fixture agreed with the bug
 
@@ -1743,15 +1647,14 @@ change at all, with two abstentions stacked on top of each other:
                             nothing here decides between them
 ```
 
-Both lines are wrong, in different ways, and the second one is the more
-embarrassing. The engine had an exact recorded form for the mishearing and
-refused it on scope (§8.4). And the shorter span did not fail because nothing
-could tell the two names apart - it failed because the longer span had already
-won; the very next token, *Menon*, is what decides it. An explanation that says
-"nothing here decides between them" while the deciding evidence sits one token
-to the right is not a rounding error in wording. This system's whole claim is
-that its reasons are the computation rather than a story told afterwards, and
-that reason was a story.
+Both lines are wrong, in different ways, and the second is the worse one. The
+engine had an exact recorded form for the mishearing and refused it on scope
+(§8.4). And the shorter span did not fail because nothing could tell the two
+names apart - it failed because the longer span had already won; the very next
+token, *Menon*, is what decides it. An explanation that says "nothing here
+decides between them" while the deciding evidence sits one token to the right is
+not a wording slip. This system's claim is that its reasons are the computation
+rather than a story told afterwards, and that reason was a story.
 
 The conflict policy now distinguishes the two cases and reports
 `superseded_by_longer_span` with the winning span named. The verdict is
@@ -1759,64 +1662,84 @@ unchanged; only the truth of the sentence is.
 
 **Why nothing caught it.** The derived tier had 69 cases asserting the very
 behaviour that was wrong, because the generator was written from the same belief
-the engine held. A generated suite whose author also wrote the system confirms
-the author's mistakes at scale - which is worth saying plainly, because the
-derived tier is otherwise the strongest evidence in this repository. Its
-construction-not-behaviour rule protects against the engine drifting away from
-the specification. It does not protect against the specification being wrong,
-and nothing automated does.
-
-**The general lesson:** every one of the four things that found a real bug here -
-the stress corpus, the slice-by-rule breakdown, the demo, and a person's
-judgement - is a different *kind* of looking. Adding more of any one of them
-would have found none of the others.
+the engine held. Its construction-not-behaviour rule protects against the engine
+drifting away from the specification. It does not protect against the
+specification being wrong, and nothing automated does. Each of the four things
+that found a real bug here - the stress corpus, the slice-by-rule breakdown, the
+demo, and a person's judgement - is a different *kind* of looking.
 
 ### 19 - a fix with a race in it
 
 Bug 16's fix has the application run its own migration when the first query
 finds no schema. FastAPI serves synchronous endpoints from a threadpool, and the
-demo page opens `/health` and `/memory` in the same tick - so on a genuinely
-fresh database both requests entered that path, both ran `alembic upgrade head`,
-and one of them lost. The visible symptom was one line in the header reading
-*"memory unreadable"* and a 503 in the console, on exactly the run where the
-healing was supposed to matter.
+demo page opens `/health` and `/memory` in the same tick, so on a fresh database
+both requests entered that path, both ran `alembic upgrade head`, and one of
+them lost: a 503 in the console and one line in the header reading *"memory
+unreadable"*, on exactly the run where the healing was supposed to matter.
 
-The design note in D-012 says this system has no concurrency story, and that is
-true of *memory*: one user, one process, no locking. Initialisation is a
-different claim. "Happens once" is not something a null check gives you when two
-threads reach it together, and lazy construction guarded only by `if x is None`
-is one of the oldest bugs there is. It is a `threading.Lock` now, with the
-double check inside it, and a test that fires four concurrent requests at a
-database with no schema and asserts four 200s.
+D-012 says this system has no concurrency story, and that is true of *memory*:
+one user, one process, no locking. Initialisation is a different claim. It is a
+`threading.Lock` now, with the double check inside it, and a test that fires four
+concurrent requests at a database with no schema and asserts four 200s. Found by
+reading the browser console during a clean-start rehearsal.
 
-**The general lesson:** a fix written for the single-threaded story you have in
-your head still runs in the threadpool you actually deployed. It was found by
-reading the browser console during a clean-start rehearsal - not by a test,
-because every test until then had built its engine before making a request.
+### 20 - a flag that was declared and never read
+
+`make eval-live` ran the offline stub. `--live` was declared on both the CLI
+parser and the harness parser and neither one ever read it, so the harness built
+its `Settings` from the defaults and went on its way. The target completed
+happily, printed **0 model calls**, and wrote `evals/results/live/`. That is the
+same shape as bug 9 and worse in one respect: bug 9 made a result file record
+something untrue about itself, while this made a result file whose *name* was
+the untrue part, in the one direction that flatters the author.
+
+`--replay` had the same defect and an extra layer under it. Once the flag was
+wired up, replaying against an empty cassette directory still produced the
+offline numbers, because `LLMFormatter` catches every exception and degrades to
+the unconditioned text. That is correct in production - a formatting stage must
+not take dictation down with it - and ruinous in an evaluation, where a run that
+reached no model at all is indistinguishable from a healthy one.
+
+Three changes. The flags now select components (`llm.sarvam` + `formatter.llm`
+for live, `llm.cassette` + `formatter.llm` for replay). The formatter counts its
+failures and keeps the last error. And the harness makes one probe call before
+running anything, so a live or replay run that cannot reach its model fails with
+a sentence naming the reason and writes no file at all:
+
+```
+psm-eval: error: the formatter.llm formatter could not reach llm.cassette:
+CassetteMiss: no recording for this request (b20eeaec...). Nothing was written.
+Run `make eval` for the offline evaluation.
+```
+
+Found by working through `RUN.md` and typing every documented command, which is
+the one kind of looking this project had not done to itself. It also prompted
+`tests/test_live_path.py`, which drives the whole live chain against a stub
+endpoint on localhost and turns "lightly exercised" into five assertions.
 
 ## 19. Changes made to test cases, and why
 
-The specification cases were written before the engine. When the two disagreed I
-changed the case only when the case was wrong, and every change is logged here.
+The specification cases were written before the engine. When the two disagreed
+the case changed only when the case was wrong, and every change is logged here.
 **Only two expected verdicts ever changed**, and both are marked.
 
 | Case | Change | Why |
 |---|---|---|
-| A8-001, A8-003 | reason `standing_instruction` → `exact_observed_variant` | the replacement comes from the table of known forms; the instruction is *why the form is on file*, not the mechanism that applied it |
+| A8-001, A8-003 | reason `standing_instruction` → `exact_observed_variant` | the replacement comes from the table of known forms; the instruction is *why the form is on file*, not what applied it |
 | B12-001 | reason → `below_threshold` | the gate opens, retrieval finds nothing worth acting on. Recorded as it behaves |
 | B14-001 | reason → `below_threshold` | same: we looked, and declined |
-| B14-002 | reason → `ambiguous_conflict` | two known Shreyas retrieve, neither is the person in the sentence, and the system abstains because it cannot tell them apart. Right outcome, more precise reason |
-| B6-001, B6-002, B13-001 | reason → `no_candidate` | these never reach the scorer - the phonetic code differs, so the gate closes. A *better* result than expected: the rejection is free, not merely correct |
+| B14-002 | reason → `ambiguous_conflict` | two known Shreyas retrieve, neither is the person in the sentence, and the system abstains. Right outcome, more precise reason |
+| B6-001, B6-002, B13-001 | reason → `no_candidate` | the phonetic code differs, so the gate closes before the scorer. Better than expected: the rejection is free, not merely correct |
 | B10-001 | changed the test word | the original form was too distant to retrieve at all, so the case tested nothing. The new one retrieves and is then declined for dormancy - the behaviour the case exists to test |
-| **A12-002** | **`apply` → `abstain`** | the original asked the system to fix the *formatter's* output using recogniser text it had already discarded - a formatter bug dressed as a memory case. Rewritten as the more important half: in email, the client's name is already right and must survive untouched |
-| **L5-001** | **`proposed` → `active`; class renamed `scope_specific_activation` → `cross_scope_activation`** | a product decision, not a bug fix (D-010). The case asserted that two corrections in two apps accrue separately and leave the term unproven. That is internally consistent and wrong to use: someone who fixed a colleague's name once in Slack and once in Mail has fixed it twice. Evidence is now scope-agnostic for *believing* a term; scope still decides where a term *applies*, which B4-001 tests |
+| **A12-002** | **`apply` → `abstain`** | the original asked the system to fix the *formatter's* output using recogniser text it had already discarded: a formatter bug dressed as a memory case. Rewritten as the other half - in email, the client's name is already right and must survive untouched |
+| **L5-001** | **`proposed` → `active`; class renamed `scope_specific_activation` → `cross_scope_activation`** | a product decision, not a bug fix (D-010). Someone who fixed a colleague's name once in Slack and once in Mail has fixed it twice. Evidence is now scope-agnostic for *believing* a term; scope still decides where a term *applies*, which B4-001 tests |
 | B15-001 | reason → `no_candidate` | when the fold was widened, this sentence's tokens stopped sharing a blocking key with anything, so the gate now closes before retrieval instead of opening and declining. Strictly better: the call is now free rather than merely correct |
-| B7-002 | reason → `single_observation` | also from the wider fold: "Shreyas" now shares a key with "Shreya" and is PROPOSED rather than ignored. The text is still unchanged, which is what the class requires - the rule is "do not snap an unknown name to its nearest neighbour", and a proposal changes nothing. A real cost of the wider fold, recorded rather than tuned away: the fold bought +21 derived cases and cost this one suggestion |
+| B7-002 | reason → `single_observation` | also from the wider fold: "Shreyas" now shares a key with "Shreya" and is PROPOSED rather than ignored. The text is still unchanged, which is what the class requires. A real cost, recorded rather than tuned away: the fold bought +21 derived cases and cost this one suggestion |
 | seed: `Kivi` | veto words trimmed | listing *ate*, *eat*, *breakfast* is brittle. "A common word with no positive support is left alone" is the general rule, and the stronger claim |
 | seed: `Sarvam` | added `server` as a known form | a guard referenced a form that was not in the list - dead configuration |
 | seed: both Shreyas | added `shreya` as a guessed form | needed for both to retrieve on a bare first name and demonstrate the conflict |
-| **A15-001** | **new case, `authored_before_engine: false`** | the counterpart to B4-001 and the only new specification case in the submission. A person bound to Mail, dictated in Slack, whose mishearing is on file: the correction must still be made. Written after the engine gave the wrong answer, and flagged as such (§8.4, §18 bug 18) |
-| **derived `scope_mismatch`** | **69 cases → 3, plus 66 in a new `scope_carryover` family** | **the only generated expectations ever changed.** The family asserted that an app-bound term of *any* kind must stay quiet elsewhere. That is right for a channel handle and wrong for a person. The generator now decides the expectation from the term's kind, so one construction produces both halves of the rule instead of one half twice |
+| **A15-001** | **new case, `authored_before_engine: false`** | the counterpart to B4-001 and the only new specification case. A person bound to Mail, dictated in Slack, whose mishearing is on file: the correction must still be made. Written after the engine gave the wrong answer, and flagged as such (§8.4, §18 bug 18) |
+| **derived `scope_mismatch`** | **69 cases → 3, plus 66 in a new `scope_carryover` family** | **the only generated expectations ever changed.** The family asserted that an app-bound term of *any* kind must stay quiet elsewhere: right for a channel handle, wrong for a person. The generator now decides the expectation from the term's kind |
 | seed: `Shreya Menon` | added `shreya menan` as an observed form | the seed had no app-bound person with a recorded mishearing, so A15-001 had nothing to be about. A gap in the persona, not a tuned expectation |
 | seed: `Mayura` | added a common-word guard | *"my aura"* **is** an ordinary English phrase and should have to earn its correction like *kiwi* does |
 
@@ -1826,31 +1749,32 @@ changed the case only when the case was wrong, and every change is logged here.
 better one, but the better one is a two-way classification - intrinsic or not -
 decided by the lexeme's `kind`. The real signal is richer: *how many* distinct
 applications a term has been corrected in, and whether the user ever said
-anything about where it belongs. A term corrected in four applications is
-global in all but name, and the system has no way to notice that. The honest
-statement is that the current rule is right about the cases in the taxonomy and
-crude about the space around them.
+anything about where it belongs. A term corrected in four applications is global
+in all but name, and the system cannot notice that.
 
 **One specification case fails, on purpose.** A8-002 wants `ZDR` expanded to
 `Zero-data retention (ZDR)` in an email but abbreviated in chat. The output is
 not the canonical form and cannot be produced by substitution at all - it needs
 the formatting model to act on the instruction. Passing it would mean either
 hard-coding the case or turning on a model call the rest of the evaluation does
-not use. An honest 68/69 with a documented limitation is worth more than a green
-suite hiding a real gap.
+not use. 68/69 with a documented limitation is worth more than a green suite
+hiding the gap.
 
 **Three derived cases fail, also on purpose.** All three are terms with a single
 weak observation being `PROPOSE`d rather than applied. That is the activation
 threshold doing what it is for.
 
-**Ten of ninety-four held-out mishearings are still missed, and two are
-corrupted.** The misses cluster on doubled aspirates and long vowels
-(`Rukmeeni`, `Dhroow`, `Aaditya Deshhpande`) - forms the fold reaches but the
-comparator scores just beyond the retrieval cutoff. The two corruptions are the
-more important number: `Keerthhana Krishnamurthi` became `Keerthana
-Krishnamurthy`, correcting a surname the user had not misspelled. Widening the
-fold reduces the misses and increases exactly this. That trade is the system's
-central tension and it is not solved, only positioned.
+**Ten of ninety-four held-out mishearings are still missed, and two do not
+produce the canonical form.** The misses cluster on doubled aspirates and long
+vowels (`Rukmeeni`, `Dhroow`, `Aaditya Deshhpande`), forms the fold reaches but
+the comparator scores just beyond the retrieval cutoff. The other two are
+counted against the system rather than argued away: `Keerthhana Krishnamurthi`
+came out as `Keerthana Krishnamurthi`, the given name fixed and the surname
+left, which is a half-correction rather than a wrong name; and `vaaani-gateway`
+came out correct but sentence-initially capitalised, which the exact-match check
+does not accept. Both are scored as failures because S6 asks for the canonical
+form and nothing else. Widening the fold reduces the misses and increases the
+risk of real substitutions. That trade is not solved, only positioned.
 
 **No language model is used anywhere in the committed numbers.** The whole engine
 is arithmetic - zero cost, sub-millisecond. The Sarvam adapter, the cassette
@@ -1860,18 +1784,20 @@ That leaves one important question unanswered: *would a well-prompted language
 model with no memory system have done this anyway?* That baseline has not been
 run.
 
-**The live path is lightly exercised.** `SarvamModel` is tested for construction,
-credential handling and importability without a key; it has not been run against
-a long live session. No cassettes are committed, because the committed
-evaluation makes zero model calls and so has nothing to replay.
+**The live path has never met a real model.** `tests/test_live_path.py` stands
+up a stub OpenAI-compatible endpoint on localhost and drives the whole chain
+through it, but what that cannot test is whether a real model writes good prose
+or how often it overreaches, which are the two numbers that would matter in
+production. No cassettes are committed, because the committed evaluation makes
+zero model calls and so has nothing to replay.
 
 **One canonical form per term.** A user who writes a name in both Devanagari and
 Latin is served by the system declining to convert, rather than by it holding
 both spellings. That is a schema change, not an architecture one.
 
-**More than three ambiguous letters in one word.** Alternate readings are emitted
-per combination and capped at three positions, because this is a blocking
-function and a bucket growing as 2ⁿ costs latency on every utterance.
+**More than three ambiguous letters in one word.** Alternate readings are capped
+at three ambiguous positions (§9.4), so a word with four is reachable only by its
+first three.
 
 **The instruction parser is deliberately small.** It pulls a term out of a spoken
 rule using stated heuristics - a quoted run, else the longest non-instruction
@@ -1879,38 +1805,32 @@ word - and returns nothing rather than guessing. A multi-word term yields its
 most distinctive token. It is a convenience, not a claim to understand
 instructions.
 
-**No real speech data.** Everything upstream is assumed, not measured. The
-evaluation's mishearings are rule-generated from a documented mishearing model
-(§9), not harvested from a recogniser. That model is defensible - it is built
-from published Indic ASR confusions and from the ISCII alignment of the scripts
-themselves - but it is a model, and the distribution a production recogniser
-actually produces would differ. The right next step is to run Saaras over
-recordings of these sentences and rebuild the derived tier from what it really
-returns; that is a data-collection task, not a design change, and the generator
-is already separated from the fixtures so that only its input would move.
+**No real speech data.** The evaluation's mishearings are rule-generated from
+the confusion model in §9, not harvested from a recogniser. That model is built
+from published Indic ASR confusions and from the ISCII alignment of the scripts,
+but it is still a model, and a production recogniser's distribution would differ.
+The next step is to run Saaras over recordings of these sentences and rebuild the
+derived tier from what it returns: a data-collection task, not a design change,
+and the generator is already separated from the fixtures so only its input would
+move.
 
 **Single user, single process.** No `user_id` anywhere, and the API keeps one
-engine. Honest for personal memory; not a concurrency story.
+engine. Adequate for personal memory; not a concurrency story.
 
 ## 21. Decision log
 
 Numbered and short, with the alternative that was rejected and the cost that was
-accepted. A decision that is not written down reads as a decision that was never
-noticed.
-
-The interesting ones are near the bottom. Five were changed by evidence rather
-than by argument, and the last of them - D-026 - was changed by somebody using
-the product and saying it was wrong, which no amount of evaluation would have
-produced.
+accepted. The interesting ones are near the bottom: five were changed by
+evidence rather than by argument, and the last, D-026, was changed by somebody
+using the product and saying it was wrong.
 
 ### Foundations
 
 **D-001 - Evidence is an append-only log; memory is a projection over it.**
-*Alternative: mutate memory rows in place.* Mutation is simpler and loses the
-four things the brief asks for by name: per-case memory state, decision
-provenance, a clean reset, and a reproducible evaluation. The projection is
-cached in tables for speed and is never authoritative. Cost: a rebuild step, and
-the discipline of never writing to a projection table outside the projector.
+*Alternative: mutate memory rows in place.* Mutation is simpler and loses four
+things the brief asks for by name: per-case memory state, decision provenance, a
+clean reset, and a reproducible evaluation. Cost: a rebuild step, and the
+discipline of never writing to a projection table outside the projector.
 
 **D-002 - A decision is a stack of independent policies.** *Alternative: one
 scoring function.* Each policy returns a bounded contribution plus a rationale
@@ -1938,9 +1858,8 @@ so an ablation is a serialisable value that gets embedded in the result file.
 
 **D-006 - Cases before engine.** The Tier C fixtures and their integrity tests
 were written before any engine code. `authored_before_engine` is a field on every
-case and a test caps post-hoc additions at 20% (currently 11 of 84). The brief
-says a collection of successes chosen after the fact is not an evaluation; this
-is the mechanism that makes that claim checkable rather than asserted.
+case and a test caps post-hoc additions at 20% (currently 11 of 84), which makes
+"these were not chosen after the fact" checkable rather than asserted.
 
 **D-007 - Deliberate non-goals.** Out of scope on purpose: episodic and semantic
 memory; location-scoped memory; cross-user or team memory; ASR-side biasing
@@ -1954,8 +1873,8 @@ scope is responsible for. A fourth adds surface area without adding a failure
 mode that could be demonstrated.
 
 **D-012 - Single user.** No `user_id`. The schema has no tenancy column and the
-API keeps one process-wide engine, which is the honest model for personal
-memory. The projection design makes the migration mechanical if it is ever
+API keeps one process-wide engine, which is what a single-user personal memory
+needs. The projection design makes the migration mechanical if it is ever
 needed: memory is derived from a log, so partitioning the log partitions
 everything else.
 
@@ -1978,17 +1897,13 @@ real English prose against a 367-term memory: 20 corruptions → 0.
 
 **D-009 - Activation threshold: two observations.** `n = 2` within a single
 scope; `declared` and `instruction` sources act at `n = 1`. The threshold sweep
-(S3) shows a plateau rather than a knife-edge: `apply_score` between 0.35 and
-0.55 gives the same result, and only above 0.60 does the system start missing
-corrections. A threshold in the middle of a flat region is defensible; one
-perched on a cliff is fitted.
+(S3, §12) shows a plateau rather than a knife-edge.
 
 **D-011 - What PROPOSE does.** A proposal changes no text and is surfaced as a
-distinct verdict in the trace, in the demo and in the explorer, with its own
-reason codes. It is a real product state, not a log entry: the evaluation asserts
-`PROPOSE` as an expected outcome on its own cases, so a system that quietly
-collapsed propose into abstain would fail them. A user-facing review queue is the
-obvious next surface and is not built.
+distinct verdict in the trace, the demo and the explorer, with its own reason
+codes. The evaluation asserts `PROPOSE` on its own cases, so a system that
+quietly collapsed propose into abstain would fail them. A user-facing review
+queue is the obvious next surface and is not built.
 
 **D-025 - A veto outranks a proposal in the reported reason.** When nothing is
 applied, the headline reason should say what *stopped* it. Reporting the weakest
@@ -2008,11 +1923,10 @@ the only thing that stops a large generated benchmark from being a suite that
 cannot fail. Reported separately, always.
 
 **D-017 - Ablate phonetics twice, because "no phonetics" is ambiguous.**
-*This one changed a headline number.* Removing the `phonetic` **policy** leaves
-phonetic **retrieval** running, so it measures almost nothing (65/69). The honest
-ablation swaps the encoder for `phonetics.null`, which removes retrieval too
-(57/69). Both are now reported, under names that say which is which. The first
-version of this table reported the weaker ablation under the stronger name.
+*This one changed a headline number.* Removing the policy leaves retrieval
+running (65/69); swapping the encoder for `phonetics.null` removes retrieval too
+(57/69). The first version of the table reported the weaker ablation under the
+stronger name. §18, bug 10.
 
 **D-014 - Licence: none.** No `LICENSE` file. This is a competition submission
 provided for evaluation by the recipient; all rights are reserved and the README
@@ -2029,48 +1943,38 @@ implementation detail leaking into the product. The L5-001 learning fixture was
 updated to assert the new behaviour.
 
 **D-018 - A seeded lexeme's confidence is a prior, not a value.** *This was a
-bug, found by using the demo.* A lexeme arriving with evidence already attached
-had nowhere to put it, so the projection used the stored number only while the
-log was empty. The first correction of such a term replaced a history of four
-sightings with an arithmetic over one, and **confirming a term made the system
-less confident of it**. `Lexeme.prior` now holds pre-log evidence explicitly and
-the projection is `prior + log`. Migration `0002` adds the columns. It passed 112
-tests and every evaluation case; it took thirty seconds of clicking a button to
-find.
+bug, found by using the demo.* Pre-log evidence had nowhere to live, so
+confirming a seeded term made the system **less** confident of it.
+`Lexeme.prior` now holds it explicitly and the projection is `prior + log`;
+migration `0002` adds the columns. §18, bug 11.
 
 **D-023 - The romanisation fold is bidirectional.** *Found by slicing the derived
-tier by confusion rule.* `ph→f` was collapsed and `f→p` was not; `y→i` fired only
-after a consonant, which is not where `y` sits in *Iyer* or *Yashodhara*.
-Derived tier 92.8% → 99.5%, with zero new false positives, and the gate in fact
-opened *less* often afterwards (43.4% → 28.7%). Cost, stated rather than hidden:
-B7-002 changed from silently ignoring the unknown name "Shreyas" to *proposing*
-"Shreya". The text is still unchanged, which is what that class requires.
+tier by confusion rule.* Derived tier 92.8% → 99.5% with zero new false
+positives (§18, bug 13). Cost, stated rather than hidden: B7-002 changed from
+silently ignoring the unknown name "Shreyas" to *proposing* "Shreya". The text is
+still unchanged, which is what that class requires.
 
-**D-024 - b/v is not a Bengali peculiarity.** Bengali merged the sounds
-outright, which is why it was listed first, but any recogniser choosing between
-ब and व makes the same mistake. Alternation now applies in every script that has
-both letters; Tamil is excluded, having only one labial approximant to confuse.
+**D-024 - b/v is not a Bengali peculiarity.** Alternation applies in every script
+that has both letters, not only the one that merged them (§18, bug 14). Tamil is
+excluded, having only one labial approximant to confuse.
 
 **D-026 - A binding records where evidence arrived, not where a name is
 valid.** *Reversed by somebody using the demo.* An out-of-scope binding was an
 absolute veto, so a name with an exact recorded mishearing went uncorrected
-because a different window was in focus. The veto now applies only to terms whose
-binding is intrinsic - a channel handle, a service identifier - and for
-everything else a matching scope adds confidence while a mismatching one merely
-withholds it. The full argument, and the three cases that pin it, are in §8.4.
-This is the only decision in this file that required changing generated
-expectations: 69 derived cases asserted the old rule, and the generator was
-rewritten rather than the cases edited.
+because a different window was in focus. The veto now applies only where the
+binding is intrinsic - a channel handle, a service identifier. The argument and
+the three cases that pin it are in §8.4. This is the only decision here that
+required changing generated expectations: 69 derived cases asserted the old rule,
+and the generator was rewritten rather than the cases edited.
 
 ### Open - deliberately not decided
 
 **D-019 - Where the LLM adjudicator belongs.** The port exists, the stub
-abstains, and the entire committed evaluation runs with zero model calls. The one
-failing specification case (A8-002, a conditional standing instruction) is the
-clearest evidence of where a model would earn its place: at the *formatting*
-stage, acting on an instruction, not at the decision stage choosing between
-candidates. Turning it on for that case alone would improve one number and make
-every other number non-reproducible.
+abstains, and the committed evaluation runs with zero model calls. The one
+failing specification case (A8-002) shows where a model would earn its place: at
+the *formatting* stage, acting on an instruction, not at the decision stage
+choosing between candidates. Turning it on for that case alone would improve one
+number and make every other number non-reproducible.
 
 **D-020 - Per-script canonical forms.** A lexeme has one canonical spelling. A
 user who writes a name in both Devanagari and Latin is currently served by
@@ -2078,63 +1982,41 @@ declining to convert (B18) rather than by holding both. A schema change, not an
 architecture one, and the obvious next thing to build.
 
 **D-021 - Where the common-word list should come from.**
-`src/lmh/data/common_words.txt` is a data file precisely so it can be replaced by
+`src/psm/data/common_words.txt` is a data file precisely so it can be replaced by
 a proper frequency list, or better, by the recogniser's own vocabulary and
 language-model priors. The guard mechanism does not care which; only the list's
 coverage changes.
 
 **D-013 - Disclosing the client teardown.** The publicly downloadable Kivi
 installer was unpacked and its bundled application resources read, before
-designing, to check what the shipping product's correction behaviour actually
-looks like. No account was used, no service called, nothing modified or
-redistributed, and no code from it appears here. It informed the taxonomy -
-chiefly that scope binding is per-application - and nothing else. Disclosed here
-and in the README rather than left unsaid.
+designing, to see what the shipping product's correction behaviour looks like.
+No account was used, no service called, nothing modified or redistributed, and no
+code from it appears here. It informed one thing in the taxonomy - that scope
+binding is per-application - and is disclosed here and in the README rather than
+left unsaid.
 
-## 22. Command reference
+## 22. Reproducing the numbers
+
+Every claim in this document is reproducible with one command, and `RUN.md` has
+the full procedure with expected output. In short:
 
 ```bash
-# --- getting it running -------------------------------------------------
-make install          # virtualenv + dependencies
-make seed             # create the database, run both migrations, load the persona
-make serve            # the demonstration page on :8000
-
-# --- looking at what it does --------------------------------------------
-python -m lmh.cli inspect                     # everything currently remembered
-
-python -m lmh.cli dictate "The Sarvam Kiwi service is dropping requests." \
-    --app com.tinyspeck.slackmacgap           # a correction that should happen
-
-python -m lmh.cli dictate "I ate a kiwi for breakfast." \
-    --app com.microsoft.Outlook               # the same word, left alone
-
-python -m lmh.cli dictate \
-    "Adith Narayanan is debugging Kiwi while I finish the kiwi smoothie." \
-    --app com.tinyspeck.slackmacgap           # both at once, in one sentence
-
-python -m lmh.cli dictate "मिरा शर्मा को भेज दो।" \
-    --app com.tinyspeck.slackmacgap           # native Devanagari, same code path
-
-# --- teaching it ---------------------------------------------------------
-python -m lmh.cli teach "Aadith Kulkarni" --before "Adith Kulkarni"
-python -m lmh.cli teach "Please ask Aadith when he is free" \
-    --before "Ask Aadith to review it"        # refused: a rewrite, not a respelling
-
-# --- the evidence --------------------------------------------------------
-make eval             # 69 specification + 15 learning cases
-make eval-generated   # 1,842 derived cases, with the breakdown
-make ablations        # all six ablations, exactly as committed
-make stress           # the six stress experiments
-make explore          # one browsable page covering both tiers
-make test             # 150 tests
-
-# --- measuring one component's worth -------------------------------------
-python -m lmh.cli eval --policies suppression,exact_variant --label my-ablation
-python -m lmh.cli eval --phonetics phonetics.null --label no-phonetics
-
-# --- starting over -------------------------------------------------------
-make reset            # delete ./data and re-seed
+make install && make seed     # virtualenv, migrations, the 24-term persona
+make serve                    # the demonstration page on :8000 (PORT overrides)
+make eval                     # 69 specification + 15 learning cases
+make eval-generated           # 1,842 derived cases, with the breakdown
+make ablations                # all six ablations, exactly as committed
+make stress                   # the six stress experiments
+make explore                  # one browsable page covering both tiers
+make test                     # 157 tests
 ```
 
-Every claim in this document is reproducible with one of those commands. If a
-number here disagrees with what you get, the number here is wrong.
+Measuring one component's worth is a config change, not a code change:
+
+```bash
+python -m psm.cli eval --policies suppression,exact_variant --label my-ablation
+python -m psm.cli eval --phonetics phonetics.null --label no-phonetics
+```
+
+If a number here disagrees with what those commands give you, the number here is
+wrong.

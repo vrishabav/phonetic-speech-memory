@@ -215,7 +215,7 @@ def _sentence_case(text: str) -> str:
 def build_mishearings(persona: dict, rng: random.Random, n: int = 300) -> list[dict]:
     """Sentences containing a form the system has NEVER seen for a term it knows.
 
-    This is the honest test of phonetic retrieval. If the system can only fix
+    This is the real test of phonetic retrieval. If the system can only fix
     forms already in its variant table, it is a lookup table, not a memory.
     """
     known = {v["form"] for lx in persona["lexemes"] for v in lx.get("variants", [])}

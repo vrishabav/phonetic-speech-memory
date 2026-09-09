@@ -62,13 +62,15 @@ values. No credential is committed anywhere in this repo.
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
 | `SARVAM_API_KEY` | only for `make eval-live` | - | Live model access |
-| `LMH_LLM` | no | `llm.stub` | `llm.stub` \| `llm.cassette` \| `llm.sarvam` |
-| `LMH_FORMATTER` | no | `formatter.passthrough` | `formatter.passthrough` \| `formatter.llm` |
-| `LMH_STORE` | no | `store.sqlite` | `store.sqlite` \| `store.memory` |
-| `LMH_INDEX` | no | `index.inmemory` | Candidate index |
-| `LMH_PHONETICS` | no | `phonetics.dmetaphone` | `phonetics.null` is an ablation |
-| `LMH_DATABASE_URL` | no | `sqlite:///./data/lmh.db` | Database location |
-| `LMH_POLICIES` | no | full stack | Comma-separated; removing a name is an ablation |
+| `PSM_SARVAM_BASE_URL` | no | `https://api.sarvam.ai/v1` | Any OpenAI-compatible endpoint |
+| `PSM_SARVAM_MODEL` | no | `sarvam-105b` | Model name to send in the request |
+| `PSM_LLM` | no | `llm.stub` | `llm.stub` \| `llm.cassette` \| `llm.sarvam` |
+| `PSM_FORMATTER` | no | `formatter.passthrough` | `formatter.passthrough` \| `formatter.llm` |
+| `PSM_STORE` | no | `store.sqlite` | `store.sqlite` \| `store.memory` |
+| `PSM_INDEX` | no | `index.inmemory` | Candidate index |
+| `PSM_PHONETICS` | no | `phonetics.dmetaphone` | `phonetics.null` is an ablation |
+| `PSM_DATABASE_URL` | no | `sqlite:///./data/psm.db` | Database location |
+| `PSM_POLICIES` | no | full stack | Comma-separated; removing a name is an ablation |
 
 ## 3. Install dependencies
 
@@ -80,7 +82,7 @@ Equivalent to `python3 -m venv .venv && .venv/bin/pip install -r requirements-de
 
     make seed
 
-Runs `alembic upgrade head` against `./data/lmh.db` (two hand-written revisions:
+Runs `alembic upgrade head` against `./data/psm.db` (two hand-written revisions:
 `0001` the initial schema, `0002` separating a lexeme's prior from its derived
 confidence), then loads the reproducible seed persona from
 `evals/data/persona_seed.json` - 24 terms with dated evidence, guards, standing
@@ -123,9 +125,9 @@ behind a button that is not also on the API.
 
 | | In the UI | On the API | From the CLI |
 |---|---|---|---|
-| 1. Provide observations | "Teach it" | `POST /observations` | `lmh teach` |
-| 2. Inspect the resulting memory | the table at the bottom | `GET /memory` | `lmh inspect` |
-| 3. Provide new ASR + formatted text | the two boxes at the top | `POST /dictate` | `lmh dictate` |
+| 1. Provide observations | "Teach it" | `POST /observations` | `psm teach` |
+| 2. Inspect the resulting memory | the table at the bottom | `GET /memory` | `psm inspect` |
+| 3. Provide new ASR + formatted text | the two boxes at the top | `POST /dictate` | `psm dictate` |
 | 4. See the memory-aware result | the three-line reveal | same response | same |
 | 5. Understand why it did or did not act | "Why", under the result | `resolutions[]` | printed underneath |
 | 6. Reset and repeat | "Reset to the seeded persona" | `POST /reset` | `make reset` |
@@ -144,30 +146,30 @@ The same tour from the command line:
 
 ```bash
 # 2. Inspect memory: confidence, state, variant counts, guards
-python -m lmh.cli inspect
+python -m psm.cli inspect
 
 # 3/4/5. A correction that should happen
-python -m lmh.cli dictate "The Sarvam Kiwi service is dropping requests." \
+python -m psm.cli dictate "The Sarvam Kiwi service is dropping requests." \
     --app com.tinyspeck.slackmacgap
 
 # ... the same word, which must be left alone
-python -m lmh.cli dictate "I ate a kiwi for breakfast." --app com.microsoft.Outlook
+python -m psm.cli dictate "I ate a kiwi for breakfast." --app com.microsoft.Outlook
 
 # ... both at once: one occurrence corrected, one not
-python -m lmh.cli dictate \
+python -m psm.cli dictate \
     "Adith Narayanan is debugging Kiwi while I finish the kiwi smoothie." \
     --app com.tinyspeck.slackmacgap
 
 # ... the same handle, right in Slack and wrong in Mail
-python -m lmh.cli dictate "I posted the trace in hash eng asr." --app com.tinyspeck.slackmacgap
-python -m lmh.cli dictate "I posted the trace in hash eng asr." --app com.microsoft.Outlook
+python -m psm.cli dictate "I posted the trace in hash eng asr." --app com.tinyspeck.slackmacgap
+python -m psm.cli dictate "I posted the trace in hash eng asr." --app com.microsoft.Outlook
 
 # ... native Devanagari, through the same code path
-python -m lmh.cli dictate "मिरा शर्मा को भेज दो।" --app com.tinyspeck.slackmacgap
+python -m psm.cli dictate "मिरा शर्मा को भेज दो।" --app com.tinyspeck.slackmacgap
 
 # 1. Teach it something, and watch it decline a rewrite
-python -m lmh.cli teach "Aadith Kulkarni" --before "Adith Kulkarni"
-python -m lmh.cli teach "Please ask Aadith when he is free" --before "Ask Aadith to review it"
+python -m psm.cli teach "Aadith Kulkarni" --before "Adith Kulkarni"
+python -m psm.cli teach "Please ask Aadith when he is free" --before "Ask Aadith to review it"
 
 # 6. Reset and repeat
 make reset
@@ -198,10 +200,17 @@ mechanically-derived situations, which *kinds* does it get wrong?":
 output. The tier is committed, so it does not need regenerating to be reviewed.
 
 Offline. No API key, no network. Deterministic: every time-sensitive case pins
-its own clock, model responses (when a model is enabled at all) are replayed
-from committed cassettes, and the committed run made **zero** model calls.
+its own clock, no model is enabled at all, and the committed run made **zero**
+model calls.
 
-    make eval-live    # requires SARVAM_API_KEY; records cassettes as it goes
+There is a live path, and it is optional:
+
+    make eval-live    # needs SARVAM_API_KEY
+
+`--live` swaps in the live model adapter and the memory-conditioned
+formatter, and it is checked before anything runs: if the endpoint cannot be
+reached, the command fails with the reason and writes no file. It is not needed
+to review this submission, and nothing in `evals/results/` came from it.
 
 **Browse the results rather than reading JSON:**
 
@@ -245,8 +254,8 @@ All of it is committed, and all of it regenerates:
 An ablation is a configuration list, never a code branch - which is what makes
 the table in the README checkable rather than assertable:
 
-    python -m lmh.cli eval --policies suppression,exact_variant --label my-ablation
-    python -m lmh.cli eval --phonetics phonetics.null --label no-phonetics
+    python -m psm.cli eval --policies suppression,exact_variant --label my-ablation
+    python -m psm.cli eval --phonetics phonetics.null --label no-phonetics
 
 ## 10. Reset procedure
 
@@ -262,15 +271,11 @@ state, so this is a complete reset - there is nothing else to clear. `POST
 
     make test
 
-**150 tests** in five files:
-
-| File | Count | What it protects |
-|---|---|---|
-| `tests/test_fixture_integrity.py` | 19 | Properties of the *evaluation itself*: schema validity, unique ids, expectation self-consistency, taxonomy coverage, the negative-case ratio, that every learning fixture actually executes and asserts something a check reads, and that every configurable component name resolves and is honoured |
-| `tests/test_engine.py` | 40 | The engine's mechanisms: the projection under supporting and contradicting evidence, prior decay, instruction parsing, renames, deletions and suppression |
-| `tests/test_robustness.py` | 67 | Regression guards for failures the stress and derived suites found, including the Indic-script path, the romanisation fold's coverage, and the negative half of the derived tier run inline |
-| `tests/test_api.py` | 12 | One test per capability the brief asks a reviewer to exercise, plus scope enforcement, Unicode round-tripping and the zero-cost path |
-| `tests/test_demo.py` | 12 | The demo as a deliverable: that every prepared example still behaves as its label claims, that a database with no schema is migrated rather than reported, that an unexpected failure arrives as JSON with a reason in it, that one observation reports one changed term, that the explorer is reachable, that the page calls nothing the API does not expose, that it loads no external resource, and - via `node --check` - that its embedded JavaScript actually parses |
+**157 tests**, in about five seconds, across six files. What each file protects
+is tabulated in [`REPORT.md`](REPORT.md) §16; the short version is that one file
+covers the engine's mechanisms, one the evaluation's own integrity, one the
+regressions the stress suite found, one the API, one the demo page, and one the
+live model path against a stub endpoint.
 
 The stress suite is run separately, because it takes seconds rather than
 milliseconds:
@@ -291,4 +296,4 @@ and latency at scale. Output goes to `evals/results/stress/report.json`.
 | `Address already in use` | something else holds port 8000 | `PORT=8001 make serve` |
 | a banner across the top of the demo | a request failed; the server's own reason is quoted in it verbatim | follow what it says - it is the real error, not a guess |
 | a dependency builds from source and fails | very new or very old interpreter | `make check-wheels` will say which one |
-| `SARVAM_API_KEY is not set` | `make eval-live` without a key | use `make eval`; it needs no key |
+| `SARVAM_API_KEY ... not set` | `make eval-live` without credentials | use `make eval`; it needs no key and no network |

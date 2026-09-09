@@ -22,15 +22,15 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from lmh.api import app as app_module
+from psm.api import app as app_module
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture
 def client(tmp_path, monkeypatch):
-    monkeypatch.setenv("LMH_STORE", "store.memory")
-    monkeypatch.setenv("LMH_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
+    monkeypatch.setenv("PSM_STORE", "store.memory")
+    monkeypatch.setenv("PSM_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
     app_module._engine = None
     with TestClient(app_module.app) as c:
         yield c
@@ -148,8 +148,8 @@ def test_the_demo_survives_a_database_with_no_schema(tmp_path, monkeypatch):
     not even JSON, so the interface said "API unreachable" about a server that
     was running perfectly. The migration still owns the schema; the app now runs
     it rather than reporting its absence."""
-    monkeypatch.setenv("LMH_STORE", "store.sqlite")
-    monkeypatch.setenv("LMH_DATABASE_URL", f"sqlite:///{tmp_path}/fresh.db")
+    monkeypatch.setenv("PSM_STORE", "store.sqlite")
+    monkeypatch.setenv("PSM_DATABASE_URL", f"sqlite:///{tmp_path}/fresh.db")
     app_module._engine = None
     try:
         with TestClient(app_module.app) as c:
@@ -172,8 +172,8 @@ def test_an_unexpected_failure_arrives_as_json_with_a_reason(tmp_path, monkeypat
     """Starlette's default for an unhandled error is a plain-text body, which
     makes `response.json()` throw in the browser and leaves the page able to say
     only that the response was unreadable. The reason has to survive the trip."""
-    monkeypatch.setenv("LMH_STORE", "store.memory")
-    monkeypatch.setenv("LMH_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
+    monkeypatch.setenv("PSM_STORE", "store.memory")
+    monkeypatch.setenv("PSM_DATABASE_URL", f"sqlite:///{tmp_path}/t.db")
     app_module._engine = None
     with TestClient(app_module.app, raise_server_exceptions=False) as c:
         c.get("/health")
@@ -234,8 +234,8 @@ def test_the_first_two_requests_do_not_race_to_migrate(tmp_path, monkeypatch):
     coming up half-broken on exactly the run where the healing mattered."""
     from concurrent.futures import ThreadPoolExecutor
 
-    monkeypatch.setenv("LMH_STORE", "store.sqlite")
-    monkeypatch.setenv("LMH_DATABASE_URL", f"sqlite:///{tmp_path}/race.db")
+    monkeypatch.setenv("PSM_STORE", "store.sqlite")
+    monkeypatch.setenv("PSM_DATABASE_URL", f"sqlite:///{tmp_path}/race.db")
     app_module._engine = None
     try:
         with TestClient(app_module.app) as c:
