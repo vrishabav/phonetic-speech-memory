@@ -221,3 +221,64 @@ def test_the_page_serves_and_is_self_contained(client):
         if not url.startswith(("data:", "#", "/"))
     ]
     assert not external, f"the demo page loads external resources: {external}"
+
+
+def test_the_counterfactual_shows_what_the_guard_prevented(client):
+    """The demo's distinguishing capability: not "it did the right thing", but
+    "here is what it would have done wrong, and here is the component that
+    stopped it".
+
+    This is the ablation table asked about one sentence. It has to be a real
+    re-run through the same code path against the same memory - a canned string
+    would be a claim rather than evidence - so the test asserts the actual
+    corruption, and asserts that the real answer is untouched by asking.
+    """
+    body = {
+        "asr_text": "i ate a kiwi for breakfast",
+        "formatted_text": "I ate a kiwi for breakfast.",
+        "app": "com.microsoft.Outlook",
+        "without_policies": ["common_word_guard"],
+    }
+    d = client.post("/dictate", json=body).json()
+
+    # The real answer is unaffected by having asked the counterfactual.
+    assert d["output_text"] == "I ate a kiwi for breakfast."
+
+    cf = d["counterfactual"]
+    assert cf["differs"] is True
+    assert cf["output_text"] == "I ate a Kivi for breakfast."
+    assert cf["without"] == ["common_word_guard"]
+    # The counterfactual carries its own trace, so the reviewer can see which
+    # policies voted in the world where the guard did not run.
+    assert cf["resolutions"], "a counterfactual without a trace is an assertion"
+
+
+def test_a_counterfactual_is_never_recorded_as_something_that_happened(client):
+    """It did not happen. Recording it would put a corruption this system
+    prevented into the audit log as though it had produced one."""
+    before = len(client.get("/memory").json()["lexemes"])
+    client.post(
+        "/dictate",
+        json={
+            "asr_text": "i ate a kiwi for breakfast",
+            "formatted_text": "I ate a kiwi for breakfast.",
+            "app": "com.microsoft.Outlook",
+            "without_policies": ["common_word_guard", "conflict"],
+        },
+    )
+    assert len(client.get("/memory").json()["lexemes"]) == before
+
+
+def test_an_unknown_policy_name_is_refused_rather_than_ignored(client):
+    """An ablation that quietly ran the full stack would be worse than no
+    ablation at all, and that applies to the per-call form too."""
+    r = client.post(
+        "/dictate",
+        json={
+            "asr_text": "x",
+            "formatted_text": "x",
+            "without_policies": ["no_such_policy"],
+        },
+    )
+    assert r.status_code == 422
+    assert "no_such_policy" in r.json()["detail"]

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-09T08:51:13.261511+00:00",
+  "generated_at": "2026-09-23T12:12:33.780776+00:00",
   "settings": {
     "clock": "clock.system",
     "phonetics": "phonetics.dmetaphone",
@@ -74,9 +74,9 @@
     "zero_call_cases": 69
   },
   "latency_ms": {
-    "p50": 0.982,
-    "p95": 2.965,
-    "max": 11.756
+    "p50": 0.644,
+    "p95": 1.852,
+    "max": 6.858
   },
   "by_class": {
     "acronym_collapse": {

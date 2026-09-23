@@ -302,6 +302,7 @@ PAGE = r"""<!doctype html>
     <div class="out" id="r-out"></div>
     <div class="was" id="r-was" hidden></div>
     <div id="r-proposed"></div>
+    <div id="r-counter"></div>
 
     <div class="fix">
       <label for="fix">not right? edit it here. Kivi keeps only what you change.</label>
@@ -583,7 +584,65 @@ function renderResult(d){
   say('fixflash','');
   /* Undoing is only meaningful when something was actually done. */
   $('b-undo').hidden = !acted;
+
+  renderCounterfactual(d);
 }
+
+/* ---- the counterfactual ----
+   Every restraint in this system is a named, removable policy, so "why did it
+   leave that alone?" has a second half that a demo can normally never show:
+   what it would have done otherwise. The offer is built from the policies that
+   actually vetoed on THIS call, so it is never a generic switch - it names the
+   component that made this decision and offers to take it away. */
+function renderCounterfactual(d){
+  const vetoed = [];
+  for(const r of d.resolutions){
+    for(const p of r.policies){
+      if(p.signal === 'veto' && !vetoed.includes(p.policy)) vetoed.push(p.policy);
+    }
+  }
+  if(!vetoed.length){ $('r-counter').innerHTML = ''; return; }
+  $('r-counter').innerHTML = '<div class="learned">'
+    + '<b>Something stopped this. See what happens without it.</b>'
+    + '<div class="small muted" style="margin:4px 0 8px">These are the policies '
+    + 'that vetoed on this sentence. Removing one re-runs the same text against '
+    + 'the same memory with that single component switched off.</div>'
+    + vetoed.map(p => '<button class="tiny ghost" data-cf="' + esc(p) + '" '
+        + 'style="margin:0 6px 6px 0">without <b>' + esc(p) + '</b></button>').join('')
+    + '<div id="cf-out"></div></div>';
+}
+
+$('r-counter').addEventListener('click', async ev => {
+  const btn = ev.target.closest('button[data-cf]');
+  if(!btn || !last) return;
+  const policy = btn.dataset.cf;
+  $('cf-out').innerHTML = '<span class="small muted">running...</span>';
+  let d;
+  try{
+    d = await post('/dictate', {
+      asr_text: last.asr_text,
+      formatted_text: last.formatted_text,
+      app: $('app').value || null,
+      surrounding_text: $('screen').value || null,
+      without_policies: [policy],
+    });
+  }catch(err){ $('cf-out').innerHTML = '<span class="small err">' + esc(err.message) + '</span>'; return; }
+
+  const cf = d.counterfactual;
+  $('cf-out').innerHTML = cf.differs
+    ? '<div class="small" style="margin-top:8px">without <span class="mono">'
+      + esc(policy) + '</span> the same sentence becomes:</div>'
+      + '<div class="out" style="margin-top:6px;font-size:16px;background:var(--propose-bg)">'
+      + diff(last.output_text, cf.output_text) + '</div>'
+      + '<div class="small muted" style="margin-top:6px">That is the corruption this '
+      + 'policy exists to prevent, on this sentence, measured rather than asserted. '
+      + 'Across the whole suite, removing the guards takes the false-intervention '
+      + 'rate from 0% to 21.9%.</div>'
+    : '<div class="small muted" style="margin-top:8px">Removing <span class="mono">'
+      + esc(policy) + '</span> changes nothing here: another policy independently '
+      + 'reaches the same answer. Redundancy between policies is real and worth '
+      + 'seeing, because it means no single rule is carrying this case alone.</div>';
+});
 
 function renderWhy(d){
   $('whycard').hidden = false;

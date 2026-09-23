@@ -149,10 +149,21 @@ behind a button that is not also on the API.
    **yes, write that** and run it once more; now it applies on its own.
 4. Press **undo what memory did** to see the reverse: a revert is negative
    evidence, and two of them in one application suppress the term there.
+5. Go back to **"the same word, ordinary sense"** and look under the result.
+   Because a policy vetoed on that sentence, the page offers **without
+   `common_word_guard`**. Press it. The same text, against the same memory,
+   becomes *"I ate a **Kivi** for breakfast."* That is the corruption the guard
+   prevented, produced by really re-running the sentence with that one
+   component switched off.
 
 Step 3 is the product claim in one motion, and it is also where the three
 verdicts become visible as three different things rather than as "changed or
-not".
+not". Step 5 is the claim a demo normally cannot make: not "look, it did the
+right thing", but "here is what it would have done wrong, and here is the
+component that stopped it". It is the ablation table asked about one sentence,
+and it is a real re-run rather than a canned string - `POST /dictate` takes
+`without_policies`, and the counterfactual is returned with its own full
+decision trace and is never recorded, because it did not happen.
 
 **Eight prepared examples are one click each in the UI.** Three of them are
 cases where the correct behaviour is to change nothing - those are the ones a
@@ -287,7 +298,7 @@ state, so this is a complete reset - there is nothing else to clear. `POST
 
     make test
 
-**157 tests**, in about five seconds, across six files. What each file protects
+**160 tests**, in about five seconds, across six files. What each file protects
 is tabulated in [`REPORT.md`](REPORT.md) §16; the short version is that one file
 covers the engine's mechanisms, one the evaluation's own integrity, one the
 regressions the stress suite found, one the API, one the demo page, and one the

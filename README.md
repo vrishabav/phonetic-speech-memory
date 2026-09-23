@@ -51,7 +51,7 @@ to do when something goes wrong. Nothing about running this is repeated here.
 | Corruptions across 4,000 sentences of real English prose, 367-term memory | **0 (0.00%)** |
 | Model calls in the entire evaluation | **0** |
 | Median latency | **0.67 ms** |
-| Tests | **157** |
+| Tests | **160** |
 
 The engine is entirely deterministic. A language model sits behind a port and is
 used by the *formatting* stage; no decision about memory is delegated to one,

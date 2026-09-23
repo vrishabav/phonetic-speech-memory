@@ -1186,6 +1186,30 @@ each maps to exactly one source. *Memory* is the inspector - confidence,
 strength, variants, guards, standing rule. *Evaluation* embeds the explorer.
 Reset sits in the header, reachable from anywhere.
 
+**The counterfactual, which is the part I would show first.** Every restraint in
+this system is a named, removable policy, so "why did it leave that alone?" has
+a second half that a demonstration normally cannot show: what it would have done
+otherwise. When a policy vetoes on the sentence just run, the page offers to
+remove *that* policy - never a generic switch, always the component that made
+this particular decision - and re-runs the same text against the same memory
+with it gone. On *"I ate a kiwi for breakfast"*, removing `common_word_guard`
+produces *"I ate a Kivi for breakfast."*
+
+This is the ablation table of §14 asked about one sentence instead of a whole
+suite, and it is a real re-run through the same code path rather than a stored
+string: `POST /dictate` accepts `without_policies`, builds the same
+`Adjudicator` over a shorter list, and returns the alternative output with its
+own complete decision trace. The counterfactual is never written to the
+adjudication log, because it did not happen, and recording it would put a
+corruption this system prevented into the audit trail as though it had produced
+one. Where removing a policy changes nothing, the page says so, because
+redundancy between policies is also worth seeing: it means no single rule is
+carrying that case alone.
+
+The reason this is cheap to offer is the same reason the ablations are a
+configuration list: policies are independent and selected by name. Nothing was
+added to the decision path to support it.
+
 **Eight prepared examples**, one click each. Three of them are cases where the
 correct behaviour is to change nothing. Each loads into the box, so a reviewer
 can edit it and re-run rather than only watch.
@@ -1451,14 +1475,14 @@ either.
 
 ## 16. The tests
 
-**157 tests** in six files. `make test`.
+**160 tests** in six files. `make test`.
 
 | File | n | What it protects |
 |---|---|---|
 | `test_fixture_integrity.py` | 21 | properties of the *evaluation itself*: schema validity, unique ids, expectation self-consistency, taxonomy coverage, the negative-case ratio, that every learning fixture executes and asserts something a check reads, and that every configurable component name resolves and is honoured |
 | `test_engine.py` | 40 | the engine's mechanisms: the projection under supporting and contradicting evidence, prior decay, instruction parsing, renames, deletions, suppression |
 | `test_robustness.py` | 67 | regression guards for failures the stress and derived suites found - the Indic path, the fold's coverage, the b/v alternation, and the negative half of the derived tier run inline |
-| `test_api.py` | 12 | one test per capability the brief asks a reviewer to exercise, plus scope enforcement, Unicode round-tripping and the zero-cost path |
+| `test_api.py` | 15 | one test per capability the brief asks a reviewer to exercise, plus scope enforcement, Unicode round-tripping and the zero-cost path |
 | `test_live_path.py` | 5 | the live model path end to end against a stub OpenAI-compatible endpoint on localhost: memory reaching the prompt, a rewriting reply being rejected, a 500 degrading rather than crashing, the no-memory ablation really removing the memory, and the key never appearing in a prompt or a result |
 | `test_demo.py` | 12 | the demo as a deliverable: every prepared example still behaving as its label claims, a database with no schema being migrated rather than reported, an unexpected failure arriving as JSON with a reason in it, one observation reporting one changed term, the explorer being reachable, the page calling nothing the API does not expose, no external resource loaded, and - using `node --check` - that its embedded JavaScript actually parses |
 
@@ -1479,7 +1503,7 @@ Unseen mishearings not exactly canonical           2.1%
 Model calls in the entire evaluation                  0
 Median latency, derived tier                    0.67 ms
 Throughput, 367-term memory            ~2,300 sentences/sec
-Tests                                               157
+Tests                                               160
 ```
 
 The two timing figures are the only ones here that depend on the machine; every
@@ -2050,7 +2074,7 @@ make eval-generated           # 1,842 derived cases, with the breakdown
 make ablations                # all six ablations, exactly as committed
 make stress                   # the six stress experiments
 make explore                  # one browsable page covering both tiers
-make test                     # 157 tests
+make test                     # 160 tests
 ```
 
 Measuring one component's worth is a config change, not a code change:

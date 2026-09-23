@@ -122,7 +122,23 @@ class Engine:
 
     # -- the hot path ------------------------------------------------------- #
 
-    def handle(self, utterance: Utterance, *, record: bool = True) -> Adjudication:
+    def handle(
+        self,
+        utterance: Utterance,
+        *,
+        record: bool = True,
+        policies: Sequence[str] | None = None,
+    ) -> Adjudication:
+        """Run one utterance. `policies` overrides the stack for this call only.
+
+        The override exists so the same question the ablation table answers over
+        a whole suite can be asked about one sentence: *what would this system
+        have done without the guards?* It changes nothing about how a decision
+        is made - it builds the same `Adjudicator` over a different policy list,
+        which is exactly what `--policies` does on the command line. Nothing in
+        the default path passes it, and a run that passes it is not recorded,
+        because a counterfactual is not something the system did.
+        """
         started = time.perf_counter()
 
         if not self.index.probe(utterance.formatted_text):
@@ -141,7 +157,10 @@ class Engine:
             siblings=tuple(candidates),
             edges=tuple(self._edges),
         )
-        resolutions = tuple(self.adjudicator.resolve(c, ctx) for c in candidates)
+        adjudicator = self.adjudicator
+        if policies is not None:
+            adjudicator = Adjudicator(build_stack(policies), self.settings.thresholds)
+        resolutions = tuple(adjudicator.resolve(c, ctx) for c in candidates)
         output = apply_resolutions(utterance.formatted_text, resolutions)
         return self._finish(utterance, output, resolutions, True, started, record)
 

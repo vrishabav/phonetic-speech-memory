@@ -47,13 +47,15 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.exc import OperationalError
 
-from psm.api.schemas import adjudication_json, lexeme_json
+from psm.api.schemas import _summary as _summary_of
+from psm.api.schemas import adjudication_json, lexeme_json, resolution_json
 from psm.api.ui import PAGE
 from psm.config import Settings, from_env
 from psm.domain.enums import ObservationSource
 from psm.domain.models import Binding, BindingScope, Utterance
 from psm.engine.engine import Engine
 from psm.engine.learner import observation as make_observation
+from psm.engine.policies import REGISTRY as POLICY_REGISTRY
 from psm.engine.text import changed_segments
 from psm.seed import load_persona
 
@@ -159,6 +161,15 @@ class DictateBody(BaseModel):
     app: str | None = Field(None, description="Bundle id of the target application")
     persona: str | None = None
     surrounding_text: str | None = Field(None, description="Text visible on screen")
+    without_policies: list[str] | None = Field(
+        None,
+        description=(
+            "Also answer the counterfactual: what would this same utterance, "
+            "against this same memory, have become if these policies had not "
+            "run? Returned under `counterfactual`. The main answer is "
+            "unaffected and the counterfactual is never recorded."
+        ),
+    )
 
 
 class ObservationBody(BaseModel):
@@ -270,7 +281,43 @@ def dictate(body: DictateBody) -> dict[str, Any]:
                 surrounding_text=body.surrounding_text,
             )
         )
-    return adjudication_json(adjudication)
+    payload = adjudication_json(adjudication)
+
+    # The counterfactual. Same utterance, same memory, same moment, one part of
+    # the stack switched off - which is the ablation table's question asked
+    # about a single sentence instead of a whole suite. It answers the one thing
+    # a demo normally cannot: not "look, it did the right thing", but "here is
+    # what it would have done wrong, and here is the component that stopped it".
+    if body.without_policies:
+        unknown = [p for p in body.without_policies if p not in POLICY_REGISTRY]
+        if unknown:
+            raise HTTPException(
+                422,
+                f"unknown polic{'y' if len(unknown) == 1 else 'ies'} "
+                f"{', '.join(repr(p) for p in unknown)}. Known: "
+                f"{', '.join(sorted(POLICY_REGISTRY))}",
+            )
+        reduced = [p for p in e.settings.policies if p not in set(body.without_policies)]
+        counterfactual = e.handle(
+            Utterance(
+                asr_text=body.asr_text,
+                formatted_text=adjudication.utterance.formatted_text,
+                app=body.app,
+                persona=body.persona,
+                surrounding_text=body.surrounding_text,
+            ),
+            record=False,
+            policies=reduced,
+        )
+        payload["counterfactual"] = {
+            "without": list(body.without_policies),
+            "output_text": counterfactual.output_text,
+            "intervened": counterfactual.intervened,
+            "differs": counterfactual.output_text != adjudication.output_text,
+            "summary": _summary_of(counterfactual),
+            "resolutions": [resolution_json(r) for r in counterfactual.resolutions],
+        }
+    return payload
 
 
 @app.post("/observations")
