@@ -1,0 +1,924 @@
+{
+  "$comment": "Reproducible seed persona. Fictional. Loaded by `make seed` and by every Tier C case that does not declare its own memory_overrides. Kept deliberately small: 20 lexemes is enough to produce every class in REPORT.md §14.1, and a bigger seed would hide retrieval problems rather than expose them.",
+  "persona": {
+    "name": "Nikhil Varma",
+    "role": "backend engineer on a speech platform team",
+    "location": "Bengaluru",
+    "apps": [
+      "com.tinyspeck.slackmacgap",
+      "com.microsoft.Outlook",
+      "com.microsoft.VSCode"
+    ],
+    "clock": "2026-01-15T09:00:00+00:00"
+  },
+  "lexemes": [
+    {
+      "id": "lex.aadith",
+      "canonical": "Aadith Narayanan",
+      "kind": "person",
+      "instruction": "teammate on the ASR team; two a's, not \"Adith\" or \"Aditya\"",
+      "variants": [
+        {
+          "form": "adith narayanan",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "aditya narayanan",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "adit narayan",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.shreyaa",
+      "canonical": "Shreyaa Bhattacharya",
+      "kind": "person",
+      "instruction": "colleague, platform team; double a",
+      "variants": [
+        {
+          "form": "shreya bhattacharya",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "shreyah bhattacharya",
+          "provenance": "generated",
+          "count": 0
+        },
+        {
+          "form": "shreya",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.shreya_menon",
+      "canonical": "Shreya Menon",
+      "kind": "person",
+      "instruction": "client contact; single a - a different person from Shreyaa Bhattacharya",
+      "variants": [
+        {
+          "form": "shreya menon",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "shreya menan",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "shreya",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.microsoft.Outlook"
+        }
+      ]
+    },
+    {
+      "id": "lex.kivi",
+      "canonical": "Kivi",
+      "kind": "product",
+      "instruction": "the dictation product; always capitalised, never \"kiwi\"",
+      "variants": [
+        {
+          "form": "kiwi",
+          "provenance": "observed",
+          "count": 6
+        },
+        {
+          "form": "kivvy",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "kivy",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "kiwi",
+            "support_tokens": [
+              "service",
+              "services",
+              "deploy",
+              "deployed",
+              "deploys",
+              "push",
+              "pushed",
+              "fix",
+              "fixed",
+              "bug",
+              "build",
+              "ship",
+              "shipped",
+              "release",
+              "debugging",
+              "debug",
+              "latency",
+              "endpoint",
+              "crash",
+              "logs",
+              "pr",
+              "commit",
+              "app",
+              "alpha",
+              "dictation"
+            ]
+          }
+        },
+        {
+          "kind": "lexical_context",
+          "payload": {
+            "veto_tokens": [
+              "fruit",
+              "fruits",
+              "smoothie",
+              "market",
+              "juice",
+              "peel",
+              "slice",
+              "salad",
+              "grocery",
+              "groceries"
+            ]
+          }
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 7.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.saaras",
+      "canonical": "Saaras",
+      "kind": "product",
+      "instruction": "the speech recognition model; not a person's name",
+      "variants": [
+        {
+          "form": "sarah's",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "saras",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "cyrus",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "saaraas",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "sarah's",
+            "support_tokens": [
+              "dropping",
+              "drops",
+              "word",
+              "words",
+              "utterance",
+              "transcript",
+              "transcription",
+              "transcribe",
+              "model",
+              "asr",
+              "latency",
+              "audio",
+              "endpoint",
+              "accuracy",
+              "wer",
+              "recognition"
+            ]
+          }
+        },
+        {
+          "kind": "lexical_context",
+          "payload": {
+            "veto_tokens": [
+              "desk",
+              "birthday",
+              "she",
+              "her",
+              "husband",
+              "mother",
+              "sister"
+            ]
+          }
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.mayura",
+      "canonical": "Mayura",
+      "kind": "product",
+      "instruction": "the translation model",
+      "variants": [
+        {
+          "form": "my aura",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "mayoora",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "guards": [
+        {
+          "kind": "common_word",
+          "payload": {
+            "form": "my aura",
+            "support_tokens": [
+              "translated",
+              "translate",
+              "translation",
+              "hindi",
+              "language",
+              "output",
+              "model",
+              "pipeline",
+              "string",
+              "locale"
+            ]
+          }
+        },
+        {
+          "kind": "lexical_context",
+          "payload": {
+            "veto_tokens": [
+              "reading",
+              "chakra",
+              "energy",
+              "cleanse",
+              "crystal",
+              "aura"
+            ]
+          }
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.vaani_gateway",
+      "canonical": "vaani-gateway",
+      "kind": "code_symbol",
+      "instruction": "internal service; always lowercase and hyphenated, even at the start of a sentence",
+      "variants": [
+        {
+          "form": "vani gateway",
+          "provenance": "observed",
+          "count": 4
+        },
+        {
+          "form": "vaanee gateway",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "funny gateway",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.sarvam",
+      "canonical": "Sarvam",
+      "kind": "org",
+      "instruction": "the company name; capitalised, and written as \"Sarvam\" alone mid-sentence rather than \"Sarvam AI\"",
+      "variants": [
+        {
+          "form": "survam",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "sarwam",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "sarvam ai",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "server",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "guards": [
+        {
+          "kind": "lexical_context",
+          "payload": {
+            "veto_tokens": [
+              "restart",
+              "reboot",
+              "nginx",
+              "ssh",
+              "uptime"
+            ],
+            "applies_to_forms": [
+              "server"
+            ]
+          }
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 6.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.iitm",
+      "canonical": "IIT Madras",
+      "kind": "org",
+      "variants": [
+        {
+          "form": "i i t madras",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "ait madras",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.bengaluru",
+      "canonical": "Bengaluru",
+      "kind": "place",
+      "instruction": "preferred over \"Bangalore\"",
+      "variants": [
+        {
+          "form": "bangalore",
+          "provenance": "observed",
+          "count": 5
+        }
+      ],
+      "guards": [
+        {
+          "kind": "verbatim",
+          "payload": {
+            "note": "leave alone inside quoted text or proper titles"
+          }
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 5.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.mlops",
+      "canonical": "MLOps",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "m l ops",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "ml ops",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "mel ops",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.rlhf",
+      "canonical": "RLHF",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "r l h f",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "are l h f",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.gradcam",
+      "canonical": "Grad-CAM",
+      "kind": "term",
+      "variants": [
+        {
+          "form": "grad cam",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "grad camp",
+          "provenance": "observed",
+          "count": 1
+        },
+        {
+          "form": "gradcam",
+          "provenance": "declared",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.zdr",
+      "canonical": "ZDR",
+      "kind": "term",
+      "instruction": "zero-data retention; expand on first use in an email, abbreviate in chat",
+      "variants": [
+        {
+          "form": "z d r",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "zeder",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.eng_asr",
+      "canonical": "#eng-asr",
+      "kind": "handle",
+      "instruction": "Slack channel; only ever written with the hash in Slack",
+      "variants": [
+        {
+          "form": "hash eng asr",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "eng asr channel",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.theek_hai",
+      "canonical": "theek hai",
+      "kind": "phrase",
+      "instruction": "keep romanised; never translate to \"okay\" and never render in Devanagari",
+      "variants": [
+        {
+          "form": "thik hai",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "teek hai",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.npm",
+      "canonical": "npm",
+      "kind": "code_symbol",
+      "instruction": "always lowercase, even at the start of a sentence",
+      "variants": [
+        {
+          "form": "N P M",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "Npm",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.rukmini",
+      "canonical": "Rukmini Iyer",
+      "kind": "person",
+      "instruction": "former teammate; left the team in 2025",
+      "variants": [
+        {
+          "form": "rukmani iyer",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "dormant",
+      "confidence": {
+        "alpha": 2.0,
+        "beta": 1.0
+      },
+      "last_used": "2025-04-02T10:00:00+00:00",
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.prod",
+      "canonical": "prod",
+      "kind": "code_symbol",
+      "instruction": "short for production; only in engineering contexts",
+      "variants": [
+        {
+          "form": "prawed",
+          "provenance": "observed",
+          "count": 1
+        }
+      ],
+      "state": "proposed",
+      "confidence": {
+        "alpha": 2.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "app",
+          "ref": "com.tinyspeck.slackmacgap"
+        }
+      ]
+    },
+    {
+      "id": "lex.bulbul",
+      "canonical": "Bulbul",
+      "kind": "product",
+      "instruction": "the speech synthesis model",
+      "variants": [
+        {
+          "form": "bul bul",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "bulbool",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.wer",
+      "canonical": "WER",
+      "kind": "term",
+      "instruction": "word error rate; the metric, not the past tense of 'be'",
+      "variants": [
+        {
+          "form": "w e r",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.ishaan",
+      "canonical": "Ishaan",
+      "kind": "person",
+      "variants": [
+        {
+          "form": "ishan",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 3.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ],
+      "instruction": "teammate; one word, and it sounds like the phrase \"is an\""
+    },
+    {
+      "id": "lex.meera",
+      "canonical": "मीरा शर्मा",
+      "kind": "person",
+      "instruction": "colleague on the Hindi localisation team; her name is written in Devanagari in Hindi messages",
+      "variants": [
+        {
+          "form": "मिरा शर्मा",
+          "provenance": "observed",
+          "count": 3
+        },
+        {
+          "form": "मीरा शर्मा जी",
+          "provenance": "generated",
+          "count": 0
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    },
+    {
+      "id": "lex.dhwani",
+      "canonical": "ध्वनि-सेवा",
+      "kind": "code_symbol",
+      "instruction": "internal audio service; written in Devanagari in Hindi standups, hyphenated",
+      "variants": [
+        {
+          "form": "ध्वनी सेवा",
+          "provenance": "observed",
+          "count": 2
+        },
+        {
+          "form": "ध्वनि सेवा",
+          "provenance": "observed",
+          "count": 2
+        }
+      ],
+      "state": "active",
+      "confidence": {
+        "alpha": 4.0,
+        "beta": 1.0
+      },
+      "bindings": [
+        {
+          "scope": "global"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "a": "lex.kivi",
+      "b": "lex.sarvam",
+      "rel": "cooccurs",
+      "weight": 0.8
+    },
+    {
+      "a": "lex.saaras",
+      "b": "lex.sarvam",
+      "rel": "cooccurs",
+      "weight": 0.8
+    },
+    {
+      "a": "lex.saaras",
+      "b": "lex.bulbul",
+      "rel": "cooccurs",
+      "weight": 0.7
+    },
+    {
+      "a": "lex.mayura",
+      "b": "lex.sarvam",
+      "rel": "cooccurs",
+      "weight": 0.6
+    },
+    {
+      "a": "lex.aadith",
+      "b": "lex.saaras",
+      "rel": "cooccurs",
+      "weight": 0.6
+    },
+    {
+      "a": "lex.shreyaa",
+      "b": "lex.vaani_gateway",
+      "rel": "cooccurs",
+      "weight": 0.6
+    },
+    {
+      "a": "lex.eng_asr",
+      "b": "lex.saaras",
+      "rel": "cooccurs",
+      "weight": 0.5
+    },
+    {
+      "a": "lex.shreyaa",
+      "b": "lex.shreya_menon",
+      "rel": "conflicts",
+      "weight": 1.0
+    },
+    {
+      "a": "lex.gradcam",
+      "b": "lex.mlops",
+      "rel": "cooccurs",
+      "weight": 0.4
+    }
+  ]
+}

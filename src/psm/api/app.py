@@ -54,6 +54,7 @@ from psm.domain.enums import ObservationSource
 from psm.domain.models import Binding, BindingScope, Utterance
 from psm.engine.engine import Engine
 from psm.engine.learner import observation as make_observation
+from psm.engine.text import changed_segments
 from psm.seed import load_persona
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -161,11 +162,33 @@ class DictateBody(BaseModel):
 
 
 class ObservationBody(BaseModel):
-    after: str = Field(..., description="The form the user settled on")
-    before: str | None = Field(None, description="The form that was there first, if any")
+    after: str = Field(
+        ...,
+        description=(
+            "The form the user settled on. For source='instruction' this is the "
+            "instruction sentence itself, which is where the term is read from."
+        ),
+    )
+    before: str | None = Field(
+        None,
+        description=(
+            "The form that was there first, if any. It may be a whole sentence: "
+            "only the span that actually changed is scored and learned from."
+        ),
+    )
     source: str = Field("post_edit")
     app: str | None = None
-    note: str | None = Field(None, description="A standing instruction, in the user's words")
+    note: str | None = Field(None, description="A free-text note kept with the evidence")
+    extent: str = Field(
+        "term",
+        description=(
+            "What `before` and `after` are. 'term' (the default) means they are "
+            "the two forms of one term, which is what a dictionary entry or a "
+            "fixture supplies. 'utterance' means they are two whole versions of "
+            "a piece of text, and only the run of words that actually changed "
+            "between them is recorded; the full text is kept as context."
+        ),
+    )
 
 
 # --------------------------------------------------------------------------- #
@@ -252,7 +275,21 @@ def dictate(body: DictateBody) -> dict[str, Any]:
 
 @app.post("/observations")
 def observe(body: ObservationBody) -> dict[str, Any]:
-    """Capability 1: give the system a piece of evidence and watch memory move."""
+    """Capability 1: give the system a piece of evidence and watch memory move.
+
+    With `extent="utterance"` the two texts are whole versions of a passage and
+    the pair that gets recorded is the run of words that changed between them.
+
+    That reduction belongs here rather than in the learner, and the distinction
+    it rests on is real. An `Observation` is evidence about *a term*: the
+    learner scores it, attributes it, and on a miss makes a new lexeme whose
+    canonical form is `after`. Hand it a sentence and it faithfully remembers
+    the sentence - one corrected name in a paragraph produced a lexeme whose
+    canonical form was the whole paragraph, which retrieves nothing and teaches
+    nothing. The learner is right to take what it is given at face value; it is
+    the caller's job to say what it is giving. A fixture and a dictionary entry
+    supply a term, so `term` stays the default and nothing else changes shape.
+    """
     e = engine()
     try:
         source = ObservationSource(body.source)
@@ -262,18 +299,47 @@ def observe(body: ObservationBody) -> dict[str, Any]:
             f"unknown source {body.source!r}. Known: "
             f"{', '.join(s.value for s in ObservationSource)}",
         ) from exc
+    if body.extent not in {"term", "utterance"}:
+        raise HTTPException(422, f"unknown extent {body.extent!r}. Known: term, utterance")
+
+    # `changed_segments` is the same pure function the learner scores with. It
+    # returns None for an edit that is structurally a rewrite - words added or
+    # removed - and that case is passed through whole and deliberately, so the
+    # learner refuses it and says so in its own words rather than being quietly
+    # spared the question here.
+    surrounding = None
+    if body.extent == "utterance" and body.before is not None:
+        segments = changed_segments(body.before, body.after)
+        surrounding = body.after
+        if segments is None:
+            pairs = [(body.before, body.after)]
+        elif not segments:
+            raise HTTPException(
+                422, "those two versions are identical, so there is nothing to learn"
+            )
+        else:
+            pairs = list(segments)
+    else:
+        pairs = [(body.before, body.after)]
 
     before = {lx.id: (lx.state, lx.confidence.mean) for lx in e.lexemes}
-    judged = e.observe(
-        make_observation(
-            source,
-            body.after,
-            at=e.now(),
-            before=body.before,
-            binding=Binding(BindingScope.APP, body.app) if body.app else None,
-            note=body.note,
+    # One observation per changed run. Two names fixed in one pass is two pieces
+    # of evidence, and folding them into one would lose the second.
+    recorded = [
+        e.observe(
+            make_observation(
+                source,
+                pair_after,
+                at=e.now(),
+                before=pair_before,
+                binding=Binding(BindingScope.APP, body.app) if body.app else None,
+                surrounding_text=surrounding,
+                note=body.note,
+            )
         )
-    )
+        for pair_before, pair_after in pairs
+    ]
+    judged = recorded[0]
     # Report the *effect*, not just the acceptance. "Recorded" tells a reviewer
     # nothing; "this term moved from proposed to active" is the observable that
     # the whole learning design exists to produce.
@@ -304,15 +370,39 @@ def observe(body: ObservationBody) -> dict[str, Any]:
                     "state": str(lx.state),
                 }
             )
+    def _observation_json(obs) -> dict[str, Any]:
+        return {
+            "id": obs.id,
+            "source": str(obs.source),
+            "before": obs.before,
+            "after": obs.after,
+            "polarity": str(obs.polarity),
+            "attributed_to": obs.lexeme_id,
+            # Whether the learner took it as evidence at all, and why not. A
+            # rejected observation is still appended to the log; saying so is
+            # the difference between "nothing happened" and "we looked at this
+            # and declined to learn from it".
+            "accepted": obs.accepted,
+            "phonetic_distance": (
+                round(obs.phonetic_distance, 4) if obs.phonetic_distance is not None else None
+            ),
+            "note": obs.note,
+        }
+
     return {
-        "observation": {
-            "id": judged.id,
-            "source": str(judged.source),
-            "before": judged.before,
-            "after": judged.after,
-            "polarity": str(judged.polarity),
-            "attributed_to": judged.lexeme_id,
-        },
+        # Singular, for every caller that sends one term and expects one answer.
+        "observation": _observation_json(judged),
+        # Plural, because a whole-text correction can carry more than one.
+        "observations": [_observation_json(obs) for obs in recorded],
+        # What was actually taken out of the input and written to the log. For a
+        # whole-text correction this is the point of the whole exchange: being
+        # told "recorded" after sending a paragraph leaves a reviewer unable to
+        # see that the paragraph is not what was learned.
+        "learned_from": [
+            {"before": obs.before, "after": obs.after}
+            for obs in recorded
+            if obs.before is not None
+        ],
         "memory_changes": changes,
     }
 

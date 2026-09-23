@@ -60,8 +60,8 @@ reset: ## Destroy all state and return to a freshly seeded system
 test: ## Run the test suite (includes fixture integrity)
 	$(BIN)/pytest
 
-lint:
-	$(BIN)/ruff check src tests
+lint: ## Lint every directory that holds source, including the evaluation
+	$(BIN)/ruff check src tests evals
 
 eval: ## Run the full evaluation offline (no API key required)
 	$(BIN)/python -m psm.cli eval --out evals/results --label baseline

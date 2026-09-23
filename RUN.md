@@ -125,18 +125,34 @@ behind a button that is not also on the API.
 
 | | In the UI | On the API | From the CLI |
 |---|---|---|---|
-| 1. Provide observations | "Teach it" | `POST /observations` | `psm teach` |
-| 2. Inspect the resulting memory | the table at the bottom | `GET /memory` | `psm inspect` |
-| 3. Provide new ASR + formatted text | the two boxes at the top | `POST /dictate` | `psm dictate` |
-| 4. See the memory-aware result | the three-line reveal | same response | same |
-| 5. Understand why it did or did not act | "Why", under the result | `resolutions[]` | printed underneath |
-| 6. Reset and repeat | "Reset to the seeded persona" | `POST /reset` | `make reset` |
-| - See all 1,926 evaluation cases | "The evidence", or the header link | `GET /explorer` | `make explore` |
+| 1. Provide observations | edit the result in place, or **dictionary** | `POST /observations` | `psm teach` |
+| 2. Inspect the resulting memory | **memory** (or **dictionary** for the readable form) | `GET /memory` | `psm inspect` |
+| 3. Provide new ASR + formatted text | **dictate**: the text box, and *raw recogniser text* under it | `POST /dictate` | `psm dictate` |
+| 4. See the memory-aware result | the result card, change highlighted | same response | same |
+| 5. Understand why it did or did not act | "why it did or did not act", under the result | `resolutions[]` | printed underneath |
+| 6. Reset and repeat | **reset**, in the header | `POST /reset` | `make reset` |
+| - See all 1,926 evaluation cases | **evaluation** | `GET /explorer` | `make explore` |
 
-**The fastest tour:** press **Run** on what is already in the boxes, and read the
-three lines that appear - what the recogniser **produced**, what the formatter
-**made of it**, what **memory** did. Then press the prepared example *"the same
-word, ordinary sense"* and watch it do nothing at all.
+**The fastest tour**, about ninety seconds:
+
+1. Press **run it** on the text already in the box. `Adith Narayanan` becomes
+   `Aadith Narayanan`, and the panel underneath names every policy that voted.
+2. Press the prepared example **"the same word, ordinary sense"** and watch it
+   do nothing at all. Then **"a product heard as a common word"** - same word,
+   opposite answer, because the sentence around it is different.
+3. Now teach it something it does not know. Put this in the box and run it:
+   `Ask Rohit Venkataraman to check the build logs.` Nothing happens; the name
+   is new. **Edit the result in place** to `Rohith`, press **save my
+   correction**, and read what comes back: it kept `Rohit -> Rohith` and not the
+   sentence around it. The same text is then run again, and the term is
+   *proposed*, not applied - one inferred correction is not yet a rule. Press
+   **yes, write that** and run it once more; now it applies on its own.
+4. Press **undo what memory did** to see the reverse: a revert is negative
+   evidence, and two of them in one application suppress the term there.
+
+Step 3 is the product claim in one motion, and it is also where the three
+verdicts become visible as three different things rather than as "changed or
+not".
 
 **Eight prepared examples are one click each in the UI.** Three of them are
 cases where the correct behaviour is to change nothing - those are the ones a

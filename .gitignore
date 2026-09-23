@@ -14,13 +14,24 @@ finalise.sh
 *.orig
 *.rej
 
+# The task brief itself. It is Sarvam's document, not part of this submission,
+# and republishing someone else's brief on a public repository is not a
+# decision this repository should make quietly. Keep it locally; do not upload.
+Kivi_Backend_Full_Stack_Task_Clean_Cover.pdf
+
 # --- generated at runtime -------------------------------------------------- #
 __pycache__/
 *.py[cod]
 .venv/
 venv/
 *.egg-info/
-data/
+# Anchored, and it has to be. Unanchored, `data/` matches a directory of that
+# name at ANY depth, which silently excluded `evals/data/` (every fixture, the
+# seed persona, the derived tier) and `src/psm/data/` (the common-word list) -
+# so a fresh clone had no evaluation and no guard vocabulary, and the first
+# command a reviewer runs failed. The runtime database is the only `data/` that
+# should ever be ignored, and it lives at the repository root.
+/data/
 *.db
 *.db-wal
 *.db-shm
@@ -35,5 +46,11 @@ htmlcov/
 # against the run that produced it is not evidence. Everything under it is
 # regenerable with `make eval` and `make explore`.
 #
-# evals/cassettes/ IS committed: replaying recorded model responses is what
-# makes the evaluation runnable without an API key.
+# evals/cassettes/ IS committed, as an empty directory with a .gitkeep. What
+# makes the evaluation runnable without an API key is that it makes zero model
+# calls at all: the default `llm.stub` abstains and the default formatter is a
+# passthrough. Cassettes exist for the optional `--replay` path only, nothing
+# is recorded into them, and `--replay` therefore fails with `CassetteMiss` by
+# design rather than appearing to pass on nothing.
+#
+# evals/data/ and src/psm/data/ ARE committed. See the note on `/data/` above.

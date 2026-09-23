@@ -1141,17 +1141,54 @@ in the middle of a flat region is defensible; one perched on a cliff is fitted.
 self-contained HTML page at `http://127.0.0.1:8000` (`PORT` overrides). No build step, no
 framework, no CDN, and no network access of any kind.
 
-**Layout.** Two boxes at the top - the recogniser's output, and optionally the
-formatter's version of it - then three lines that appear in order: what the
-recogniser **produced**, what the formatter **made of it**, what **memory** did
-with the change highlighted. Underneath, always, every policy that had an
-opinion and the sentence it gave. Around that: a target-application selector
-(the same words produce different answers in Slack and Mail), a panel for
-feeding it one piece of evidence, the full memory table, and a reset.
+**Layout.** Four tabs: **dictate**, **dictionary**, **memory**, **evaluation**.
+
+*Dictate* is one text box, holding the text as a person would see it appear,
+plus a target-application selector - the same words produce different answers in
+Slack and Mail. The result is a card: the memory-aware text with the change
+highlighted, a `changed` / `proposed` / `left alone` badge, the previous text
+struck through, and the cost and gate state. Underneath, always, every policy
+that had an opinion and the sentence it gave.
+
+**Why there is one box and not two.** The brief names three versions of a
+transcript, and the API takes two, because the evaluation pins the formatted
+text so that memory can be measured on its own. But the memory system reads only
+the formatted text: `Engine.handle` and all eleven policies take
+`utterance.formatted_text`, and the recogniser's raw output changes no offline
+decision. This was checked rather than assumed - the same formatted text with
+the ASR field set to the true transcript, to unrelated text, and to the empty
+string produces byte-identical output and identical reason codes. Asking for
+both up front therefore made the first screen an exercise in imagining two
+stages of a pipeline in order to exercise one. The raw recogniser line is still
+there, behind a disclosure that says exactly this, because it is a real input to
+the live formatting stage and because the brief asks that both can be provided.
+Left blank, the request sends `formatted_text: null` and the configured
+formatter runs.
+
+**Correcting the whole text is the primary way to teach it.** The result is
+editable in place, which is what a person actually does: they fix the word, not
+a dictionary entry. The correction posts with `extent="utterance"`, and only the
+run of words that changed is recorded - the answer names the pair it kept, the
+phonetic distance, and what moved in memory, then re-runs the same input so the
+effect is visible in one motion. A `PROPOSE` renders as its own strip with a
+"yes, write that" button, because one inferred correction earns a proposal
+rather than a rule, and collapsing three verdicts into changed-or-not would hide
+the distinction the whole design rests on. An "undo what memory did" button
+records a `revert` per applied change; two in one application suppress the term.
+
+*Dictionary* has two actions and **no "kind of evidence" selector**: "teach it a
+term" (you say / Kivi writes, recorded as `declared`, usable immediately) and
+"tell it a rule" (one sentence, recorded as `instruction`, whose term is read out
+of the sentence). Asking a user to classify their own keystroke against the
+`ObservationSource` vocabulary was an implementation detail wearing a label; the
+two things a person actually does are distinct enough to be two buttons, and
+each maps to exactly one source. *Memory* is the inspector - confidence,
+strength, variants, guards, standing rule. *Evaluation* embeds the explorer.
+Reset sits in the header, reachable from anywhere.
 
 **Eight prepared examples**, one click each. Three of them are cases where the
-correct behaviour is to change nothing. Each loads into the two boxes, so a
-reviewer can edit it and re-run rather than only watch.
+correct behaviour is to change nothing. Each loads into the box, so a reviewer
+can edit it and re-run rather than only watch.
 
 **The case explorer is in the page**, at `/explorer` and linked from the header,
 because eight examples are an illustration and 1,926 cases are the evidence.
@@ -1425,7 +1462,7 @@ either.
 | `test_live_path.py` | 5 | the live model path end to end against a stub OpenAI-compatible endpoint on localhost: memory reaching the prompt, a rewriting reply being rejected, a 500 degrading rather than crashing, the no-memory ablation really removing the memory, and the key never appearing in a prompt or a result |
 | `test_demo.py` | 12 | the demo as a deliverable: every prepared example still behaving as its label claims, a database with no schema being migrated rather than reported, an unexpected failure arriving as JSON with a reason in it, one observation reporting one changed term, the explorer being reachable, the page calling nothing the API does not expose, no external resource loaded, and - using `node --check` - that its embedded JavaScript actually parses |
 
-That last one exists because the client is ~200 lines of JavaScript inside a
+That last one exists because the client is ~490 lines of JavaScript inside a
 Python string, which no compiler ever sees. A stray bracket produces a blank page
 and a green test suite. It happened once.
 

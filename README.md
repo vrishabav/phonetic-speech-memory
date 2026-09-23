@@ -251,7 +251,7 @@ stress-test data generation and coding. The design decisions, the taxonomy and t
 pressure-test ideas and to write, draft elements and organize the repository structure. Specific uses are recorded in
 [`REPORT.md`](REPORT.md).
 
-Two research notes, for completeness:
+One research note, for completeness:
 
 - **Client inspection.** A shipping dictation client .exe was unpacked from its
   public installer and its bundled application resources read, to see what a
