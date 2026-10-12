@@ -18,6 +18,7 @@ finalise.sh
 # and republishing someone else's brief on a public repository is not a
 # decision this repository should make quietly. Keep it locally; do not upload.
 Kivi_Backend_Full_Stack_Task_Clean_Cover.pdf
+Phonetic Speech Memory Complete Interview Preparation.md
 
 # --- generated at runtime -------------------------------------------------- #
 __pycache__/
@@ -54,3 +55,6 @@ htmlcov/
 # design rather than appearing to pass on nothing.
 #
 # evals/data/ and src/psm/data/ ARE committed. See the note on `/data/` above.
+
+# Local assistant instructions, not part of the submission
+CLAUDE.md
